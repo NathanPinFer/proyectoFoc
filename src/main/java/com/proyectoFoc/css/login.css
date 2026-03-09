@@ -1,0 +1,105 @@
+/* Contenedor principal */
+.login-container {
+    -fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2);
+}
+
+/* Panel izquierdo */
+.left-panel {
+    -fx-background-color: linear-gradient(to bottom, #2C3E50, #34495E);
+}
+
+.hotel-icon {
+    -fx-font-size: 80px;
+    -fx-text-fill: white;
+}
+
+.app-title {
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 20 0 10 0;
+}
+
+.app-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+}
+
+/* Panel derecho */
+.right-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 0 20 20 0;
+}
+
+.login-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+.login-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7F8C8D;
+    -fx-padding: 0 0 20 0;
+}
+
+/* Campos de formulario */
+.field-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2C3E50;
+}
+
+.text-field, .password-field {
+    -fx-pref-height: 45px;
+    -fx-background-color: #F8F9FA;
+    -fx-border-color: #ECF0F1;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 0 15px;
+    -fx-font-size: 15px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #3498DB;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.1), 10, 0, 0, 0);
+}
+
+/* Mensaje de error */
+.error-label {
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 10;
+    -fx-background-color: rgba(231, 76, 60, 0.1);
+    -fx-background-radius: 8px;
+}
+
+/* Botón Login */
+.btn-login {
+    -fx-pref-height: 50px;
+    -fx-background-color: linear-gradient(to right, #3498DB, #2980B9);
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.3), 15, 0, 0, 4);
+}
+
+.btn-login:hover {
+    -fx-background-color: linear-gradient(to right, #2980B9, #21618C);
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.4), 20, 0, 0, 6);
+}
+
+.btn-login:pressed {
+    -fx-background-color: linear-gradient(to right, #21618C, #1A5276);
+}
+
+/* Versión */
+.version-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #95A5A6;
+}
