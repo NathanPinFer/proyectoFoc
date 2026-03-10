@@ -3,7 +3,7 @@
     -fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2);
 }
 
-/* 2. La Tarjeta Blanca/Oscura centrada gracias al StackPane */
+/* La Tarjeta Blanca/Oscura centrada gracias al StackPane */
 .login-card {
     /* Fondo transparente porque los paneles internos ya tienen su color */
     -fx-background-color: transparent;
