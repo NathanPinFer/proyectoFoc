@@ -3,54 +3,46 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.proyectoFoc.proyectoFoc.controller.LoginController"
-            prefHeight="600.0" prefWidth="900.0" styleClass="login-container">
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.proyectoFoc.controller.LoginController"
+           prefHeight="700.0" prefWidth="1000.0" styleClass="login-container">
 
-    <!-- Panel izquierdo decorativo -->
-    <VBox alignment="CENTER" layoutX="0" layoutY="0" prefWidth="400" prefHeight="600"
-          styleClass="left-panel">
-        <Label text="🏨" styleClass="hotel-icon"/>
-        <Label text="Hotel Management" styleClass="app-title"/>
-        <Label text="Sistema integral de gestión hotelera" styleClass="app-subtitle" wrapText="true" textAlignment="CENTER">
+    <HBox alignment="CENTER" maxWidth="900" maxHeight="550" styleClass="login-card">
+
+        <VBox alignment="CENTER" styleClass="left-panel" HBox.hgrow="ALWAYS" prefWidth="400">
+            <Label text="🏨" styleClass="hotel-icon"/>
+            <Label text="Hotel Management" styleClass="app-title" textAlignment="CENTER" wrapText="true"/>
+            <Label text="Sistema integral de gestión hotelera" styleClass="app-subtitle" wrapText="true" textAlignment="CENTER">
+                <padding>
+                    <Insets left="40" right="40"/>
+                </padding>
+            </Label>
+        </VBox>
+
+        <VBox alignment="CENTER" styleClass="right-panel" spacing="20" HBox.hgrow="ALWAYS" prefWidth="500">
             <padding>
-                <Insets left="40" right="40"/>
+                <Insets top="40" bottom="40" left="60" right="60"/>
             </padding>
-        </Label>
-    </VBox>
 
-    <!-- Panel derecho - Formulario -->
-    <VBox alignment="CENTER" layoutX="400" layoutY="0" prefWidth="500" prefHeight="600"
-          styleClass="right-panel" spacing="25">
-        <padding>
-            <Insets top="80" bottom="80" left="60" right="60"/>
-        </padding>
+            <Label text="Bienvenido" styleClass="login-title"/>
+            <Label text="Ingresa tus credenciales para continuar" styleClass="login-subtitle"/>
 
-        <!-- Título -->
-        <Label text="Bienvenido" styleClass="login-title"/>
-        <Label text="Ingresa tus credenciales para continuar" styleClass="login-subtitle"/>
+            <VBox spacing="5">
+                <Label text="Usuario" styleClass="field-label"/>
+                <TextField fx:id="usuarioField" promptText="Ingresa tu usuario" styleClass="text-field"/>
+            </VBox>
 
-        <!-- Campo Usuario -->
-        <VBox spacing="8">
-            <Label text="Usuario" styleClass="field-label"/>
-            <TextField fx:id="usuarioField" promptText="Ingresa tu usuario" styleClass="text-field"/>
+            <VBox spacing="5">
+                <Label text="Contraseña" styleClass="field-label"/>
+                <PasswordField fx:id="passwordField" promptText="Ingresa tu contraseña" styleClass="text-field"/>
+            </VBox>
+
+            <Label fx:id="errorLabel" styleClass="error-label" visible="false" wrapText="true" textAlignment="CENTER"/>
+
+            <Button text="Iniciar Sesión" onAction="#handleLogin" styleClass="btn-login" maxWidth="Infinity"/>
+
+            <Label text="Versión 1.0.0 - TFG 2026" styleClass="version-label"/>
         </VBox>
-
-        <!-- Campo Contraseña -->
-        <VBox spacing="8">
-            <Label text="Contraseña" styleClass="field-label"/>
-            <PasswordField fx:id="passwordField" promptText="Ingresa tu contraseña" styleClass="text-field"/>
-        </VBox>
-
-        <!-- Mensaje de error -->
-        <Label fx:id="errorLabel" styleClass="error-label" visible="false" wrapText="true" textAlignment="CENTER"/>
-
-        <!-- Botón Login -->
-        <Button text="Iniciar Sesión" onAction="#handleLogin" styleClass="btn-login" maxWidth="Infinity"/>
-
-        <!-- Versión -->
-        <Label text="Versión 1.0.0 - TFG 2026" styleClass="version-label"/>
-    </VBox>
-</AnchorPane>
+    </HBox>
+</StackPane>

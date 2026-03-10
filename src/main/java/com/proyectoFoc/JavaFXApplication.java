@@ -12,15 +12,20 @@ public class JavaFXApplication extends Application {
 
     @Override
     public void init() {
-        applicationContext = new SpringApplicationBuilder(Main.class).run();
+        // NO inicializar Spring aquí todavía
     }
 
     @Override
     public void start(Stage primaryStage) {
-        // Registrar el Stage en Spring
-        applicationContext.getBeanFactory().registerSingleton("primaryStage", primaryStage);
+        // registrar el Stage como bean
+        applicationContext = new SpringApplicationBuilder(Main.class)
+                .initializers(context -> {
+                    // Registrar el Stage antes de que Spring inicialice los beans
+                    context.getBeanFactory().registerSingleton("primaryStage", primaryStage);
+                })
+                .run();
 
-        // Obtener StageManager y mostrar Login
+        //  Despues obtener el StageManager y cargar la vista
         StageManager stageManager = applicationContext.getBean(StageManager.class);
         stageManager.switchScene(FxmlView.LOGIN);
     }

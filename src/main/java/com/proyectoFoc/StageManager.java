@@ -4,10 +4,11 @@ import com.proyectoFoc.config.SpringFXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 public class StageManager {
@@ -24,7 +25,7 @@ public class StageManager {
     public void switchScene(FxmlView view) {
         Parent root = loadView(view.getFxmlFile());
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/login.css")).toExternalForm());
 
         primaryStage.setScene(scene);
         primaryStage.setTitle(view.getTitle());

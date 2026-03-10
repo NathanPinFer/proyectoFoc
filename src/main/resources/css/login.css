@@ -1,0 +1,108 @@
+/* Contenedor Raíz (El fondo que ocupa toda la ventana) */
+.login-container {
+    -fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2);
+}
+
+/* 2. La Tarjeta Blanca/Oscura centrada gracias al StackPane */
+.login-card {
+    /* Fondo transparente porque los paneles internos ya tienen su color */
+    -fx-background-color: transparent;
+    /* Sombra suave para dar efecto de elevación */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 30, 0, 0, 10);
+}
+
+/* Panel Izquierdo  */
+.left-panel {
+    -fx-background-color: linear-gradient(to bottom, #2C3E50, #34495E);
+    /* Redondeamos solo las esquinas izquierdas  */
+    -fx-background-radius: 20 0 0 20;
+}
+
+.hotel-icon {
+    -fx-font-size: 80px;
+    -fx-text-fill: white;
+}
+
+.app-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-text-alignment: center;
+}
+
+.app-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+}
+
+/* 4. Panel Derecho (Formulario) */
+.right-panel {
+    -fx-background-color: white;
+    /* Redondeamos solo las esquinas derechas  */
+    -fx-background-radius: 0 20 20 0;
+}
+
+.login-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2C3E50;
+}
+
+.login-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7F8C8D;
+}
+
+/* Campos de Entrada */
+.field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495E;
+}
+
+.text-field, .password-field {
+    -fx-pref-height: 45px;
+    -fx-background-color: #F8F9FA;
+    -fx-border-color: #DCDDE1;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 0 15px;
+    -fx-font-size: 14px;
+    -fx-transition: 0.3s;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #3498DB;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(52, 152, 219, 0.2), 8, 0, 0, 0);
+}
+
+/* Botón Iniciar Sesión */
+.btn-login {
+    -fx-pref-height: 50px;
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+}
+
+.btn-login:hover {
+    -fx-background-color: #2980B9;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+
+/* Mensajes de Error y Versión */
+.error-label {
+    -fx-text-fill: #E74C3C;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.version-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #BDC3C7;
+}
