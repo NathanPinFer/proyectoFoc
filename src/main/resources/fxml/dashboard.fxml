@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.hotel.gestion_hotelera.controller.DashboardController"
+            stylesheets="@../css/dashboard.css">
+
+    <!-- CABECERA -->
+    <top>
+        <VBox styleClass="header-box">
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <Label text="Panel Principal" styleClass="titulo-pagina"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnMesAnterior" text="◀" styleClass="btn-nav"
+                        onAction="#mesAnterior"/>
+                <Label fx:id="lblMesAnio" text="Marzo 2026" styleClass="label-mes"/>
+                <Button fx:id="btnMesSiguiente" text="▶" styleClass="btn-nav"
+                        onAction="#mesSiguiente"/>
+            </HBox>
+
+            <!-- Leyenda -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Pane styleClass="leyenda-box, color-checkin"/>
+                    <Label text="Check-in hoy" styleClass="leyenda-texto"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Pane styleClass="leyenda-box, color-encurso"/>
+                    <Label text="En curso" styleClass="leyenda-texto"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Pane styleClass="leyenda-box, color-checkout"/>
+                    <Label text="Check-out hoy" styleClass="leyenda-texto"/>
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Pane styleClass="leyenda-box, color-futuro"/>
+                    <Label text="Reserva futura" styleClass="leyenda-texto"/>
+                </HBox>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- CALENDARIO -->
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToWidth="true"
+                    styleClass="scroll-calendario">
+            <GridPane fx:id="gridCalendario" styleClass="grid-calendario"/>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

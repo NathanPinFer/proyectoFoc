@@ -1,0 +1,151 @@
+/* ── Cabecera ── */
+.header-box {
+    -fx-padding: 16 20 12 20;
+    -fx-spacing: 10;
+    -fx-background-color: #1e2a3a;
+}
+
+.titulo-pagina {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.label-mes {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-min-width: 140px;
+    -fx-alignment: CENTER;
+}
+
+.btn-nav {
+    -fx-background-color: #2d4a6b;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-background-radius: 6;
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+}
+
+.btn-nav:hover {
+    -fx-background-color: #3a5f8a;
+}
+
+/* ── Leyenda ── */
+.leyenda-box {
+    -fx-min-width: 16px;
+    -fx-min-height: 16px;
+    -fx-background-radius: 3;
+}
+
+.leyenda-texto {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 12px;
+}
+
+.color-checkin   { -fx-background-color: #27ae60; }
+.color-encurso   { -fx-background-color: #2980b9; }
+.color-checkout  { -fx-background-color: #e67e22; }
+.color-futuro    { -fx-background-color: #8e44ad; }
+
+/* ── Scroll y grid ── */
+.scroll-calendario {
+    -fx-background-color: #f0f2f5;
+    -fx-background: #f0f2f5;
+}
+
+.grid-calendario {
+    -fx-background-color: #f0f2f5;
+    -fx-padding: 0;
+    -fx-hgap: 0;
+    -fx-vgap: 0;
+}
+
+/* ── Celdas cabecera días ── */
+.celda-dia {
+    -fx-background-color: #2c3e50;
+    -fx-alignment: CENTER;
+    -fx-min-width: 38px;
+    -fx-min-height: 36px;
+    -fx-border-color: #3d5166;
+    -fx-border-width: 0 1 1 0;
+}
+
+.celda-dia-label {
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.celda-dia-hoy {
+    -fx-background-color: #e74c3c;
+}
+
+/* ── Columna habitaciones ── */
+.celda-habitacion {
+    -fx-background-color: #2c3e50;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 8 0 10;
+    -fx-min-width: 130px;
+    -fx-min-height: 44px;
+    -fx-border-color: #3d5166;
+    -fx-border-width: 0 2 1 0;
+}
+
+.celda-habitacion-num {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.celda-habitacion-tipo {
+    -fx-text-fill: #a0b4c8;
+    -fx-font-size: 10px;
+}
+
+/* ── Celdas vacías del grid ── */
+.celda-vacia {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e4e8;
+    -fx-border-width: 0 1 1 0;
+    -fx-min-width: 38px;
+    -fx-min-height: 44px;
+}
+
+.celda-vacia-fin-semana {
+    -fx-background-color: #f5f7fa;
+}
+
+/* ── Bloques de reserva ── */
+.bloque-reserva {
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-padding: 3 6 3 6;
+}
+
+.bloque-checkin  { -fx-background-color: #27ae60; }
+.bloque-encurso  { -fx-background-color: #2980b9; }
+.bloque-checkout { -fx-background-color: #e67e22; }
+.bloque-futuro   { -fx-background-color: #8e44ad; }
+
+.bloque-reserva:hover {
+    -fx-opacity: 0.85;
+}
+
+.bloque-nombre {
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.bloque-precio {
+    -fx-text-fill: rgba(255,255,255,0.85);
+    -fx-font-size: 10px;
+}
+
+.vip-star {
+    -fx-text-fill: #FFD700;
+    -fx-font-size: 11px;
+}

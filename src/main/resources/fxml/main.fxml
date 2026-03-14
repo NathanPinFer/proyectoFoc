@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.hotel.gestion_hotelera.controller.MainController"
+            style="-fx-background-color: #F5F7FA;">
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox style="-fx-background-color: #2C3E50; -fx-min-width: 220px; -fx-pref-width: 220px; -fx-pref-height: 700;">
+            <padding><Insets top="30" bottom="30" left="20" right="20"/></padding>
+
+            <Label text="🏨" style="-fx-font-size: 40px;"/>
+            <Label text="Hotel System"
+                   style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 0 0 30 0;"/>
+
+            <Label fx:id="btnDashboard"    text="📊  Dashboard"
+                   style="-fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 12 0 12 0; -fx-cursor: hand;"
+                   onMouseClicked="#navegarDashboard"/>
+            <Label fx:id="btnReservas"     text="📅  Reservas"
+                   style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px; -fx-padding: 12 0 12 0; -fx-cursor: hand;"
+                   onMouseClicked="#navegarReservas"/>
+            <Label fx:id="btnClientes"     text="👥  Clientes"
+                   style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px; -fx-padding: 12 0 12 0; -fx-cursor: hand;"
+                   onMouseClicked="#navegarClientes"/>
+            <Label fx:id="btnHabitaciones" text="🛏️  Habitaciones"
+                   style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px; -fx-padding: 12 0 12 0; -fx-cursor: hand;"
+                   onMouseClicked="#navegarHabitaciones"/>
+            <Label fx:id="btnFacturacion"  text="🧾  Facturación"
+                   style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px; -fx-padding: 12 0 12 0; -fx-cursor: hand;"
+                   onMouseClicked="#navegarFacturacion"/>
+            <Label fx:id="btnEmpleados"    text="👔  Empleados"
+                   style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px; -fx-padding: 12 0 12 0; -fx-cursor: hand;"
+                   onMouseClicked="#navegarEmpleados"/>
+        </VBox>
+    </left>
+
+    <!-- ÁREA CENTRAL: aquí se cargan las vistas -->
+    <center>
+        <StackPane fx:id="contenidoCentral"/>
+    </center>
+
+</BorderPane>
