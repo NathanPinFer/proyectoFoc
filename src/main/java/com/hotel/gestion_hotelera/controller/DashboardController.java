@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hotel.gestion_hotelera.dto.ReservaCalendarioDTO;
+import com.hotel.gestion_hotelera.model.Cliente;
+import com.hotel.gestion_hotelera.model.Habitacion;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Locale;
 import org.springframework.stereotype.Controller;
 
+import com.hotel.gestion_hotelera.model.Habitacion;
+import javafx.scene.control.*;
+
 @Controller // <- este es de Spring: org.springframework.stereotype.Controller
 public class DashboardController {
 
@@ -36,6 +39,30 @@ public class DashboardController {
     private ScrollPane scrollPane;
     @FXML
     private Label lblMesAnio;
+    @FXML
+    private VBox panelDetalle;
+    @FXML
+    private Label lblDetalleTitulo;
+    @FXML
+    private Label lblDetalleEstado;
+    @FXML
+    private Label lblDetalleHabitacion;
+    @FXML
+    private Label lblDetalleTipoHab;
+    @FXML
+    private Label lblDetalleCliente;
+    @FXML
+    private Label lblDetalleVip;
+    @FXML
+    private Label lblDetalleFechaEntrada;
+    @FXML
+    private Label lblDetalleFechaSalida;
+    @FXML
+    private Label lblDetalleNoches;
+    @FXML
+    private Label lblDetallePrecioNoche;
+    @FXML
+    private Label lblDetalleSubtotal;
 
     private YearMonth mesActual;
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -64,6 +91,286 @@ public class DashboardController {
     private void mesSiguiente() {
         mesActual = mesActual.plusMonths(1);
         cargarCalendario();
+    }
+
+    private void abrirDetalle(ReservaCalendarioDTO reserva) {
+        // Rellenar datos
+        lblDetalleTitulo.setText("Reserva #" + reserva.getIdReserva());
+
+        // Estado con color
+        String estadoTexto = switch (reserva.getEstadoBloque()) {
+            case "CHECKIN_HOY" -> "CHECK-IN HOY";
+            case "CHECKOUT_HOY" -> "CHECK-OUT HOY";
+            case "EN_CURSO" -> "EN CURSO";
+            default -> "RESERVA FUTURA";
+        };
+        String estadoColor = switch (reserva.getEstadoBloque()) {
+            case "CHECKIN_HOY" -> "#27ae60";
+            case "CHECKOUT_HOY" -> "#e67e22";
+            case "EN_CURSO" -> "#2980b9";
+            default -> "#8e44ad";
+        };
+        lblDetalleEstado.setText(estadoTexto);
+        lblDetalleEstado.setStyle("-fx-background-color: " + estadoColor +
+                "; -fx-background-radius: 4; -fx-padding: 4 10 4 10; " +
+                "-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        // Habitación
+        lblDetalleHabitacion.setText("Habitación " + reserva.getNumeroHabitacion());
+        lblDetalleTipoHab.setText(reserva.getTipoHabitacion() +
+                " · Piso " + reserva.getPiso());
+
+        // Cliente
+        lblDetalleCliente.setText(reserva.getNombreCliente() + " " +
+                reserva.getApellidosCliente());
+        lblDetalleVip.setText(Boolean.TRUE.equals(reserva.getClienteVip())
+                ? "★ Cliente VIP"
+                : "");
+
+        // Fechas
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        lblDetalleFechaEntrada.setText("Entrada: " +
+                reserva.getFechaEntrada().format(fmt));
+        lblDetalleFechaSalida.setText("Salida: " +
+                reserva.getFechaSalida().format(fmt));
+        long noches = java.time.temporal.ChronoUnit.DAYS.between(
+                reserva.getFechaEntrada(), reserva.getFechaSalida());
+        lblDetalleNoches.setText(noches + " noche" + (noches != 1 ? "s" : ""));
+
+        // Importe
+        lblDetallePrecioNoche.setText(reserva.getPrecioNoche() + " €/noche");
+        lblDetalleSubtotal.setText("Total: " + reserva.getSubtotal() + " €");
+
+        // Mostrar panel
+        panelDetalle.setVisible(true);
+        panelDetalle.setManaged(true);
+    }
+
+    @FXML
+    private void cerrarDetalle() {
+        panelDetalle.setVisible(false);
+        panelDetalle.setManaged(false);
+    }
+
+    private void abrirFormularioReserva(Habitacion habitacion, LocalDate fecha) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Nueva Reserva — Hab. " + habitacion.getNumeroHabitacion());
+
+        ButtonType btnGuardar = new ButtonType("Guardar", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
+        dialog.getDialogPane().setMinWidth(480);
+
+        VBox contenido = new VBox(12);
+        contenido.setPadding(new Insets(20));
+
+        // Info habitación (solo lectura)
+        Label lblInfoHab = new Label("Habitación " + habitacion.getNumeroHabitacion()
+                + " · " + habitacion.getTipoHabitacion().getNombre()
+                + " · " + habitacion.getTipoHabitacion().getPrecioBase() + "€/noche");
+        lblInfoHab.setStyle("-fx-font-weight: bold; -fx-font-size: 13px;");
+
+        // Fechas
+        HBox filaDates = new HBox(12);
+        DatePicker dpEntrada = new DatePicker(fecha);
+        DatePicker dpSalida = new DatePicker(fecha.plusDays(1));
+        dpEntrada.setPromptText("Entrada");
+        dpSalida.setPromptText("Salida");
+        filaDates.getChildren().addAll(
+                new VBox(4, new Label("Entrada:"), dpEntrada),
+                new VBox(4, new Label("Salida:"), dpSalida));
+
+        // Precio
+        HBox filaPrecio = new HBox(12);
+        TextField txtPrecio = new TextField(
+                habitacion.getTipoHabitacion().getPrecioBase().toString());
+        filaPrecio.getChildren().addAll(
+                new VBox(4, new Label("Precio/noche (€):"), txtPrecio));
+
+        // Separador cliente
+        Label lblSecCliente = new Label("HUÉSPED");
+        lblSecCliente.setStyle("-fx-font-size: 11px; -fx-text-fill: #5a7a9a; -fx-font-weight: bold;");
+
+        // Búsqueda cliente existente
+        TextField txtBuscarCliente = new TextField();
+        txtBuscarCliente.setPromptText("Buscar cliente por nombre o DNI...");
+        ListView<Cliente> listaClientes = new ListView<>();
+        listaClientes.setPrefHeight(80);
+        listaClientes.setVisible(false);
+        listaClientes.setManaged(false);
+
+        // Referencia al cliente seleccionado
+        final Cliente[] clienteSeleccionado = { null };
+        Label lblClienteSeleccionado = new Label("");
+        lblClienteSeleccionado.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
+
+        // Búsqueda en tiempo real
+        txtBuscarCliente.textProperty().addListener((obs, oldVal, newVal) -> {
+            clienteSeleccionado[0] = null;
+            lblClienteSeleccionado.setText("");
+            if (newVal.length() >= 2) {
+                try {
+                    String url = "http://localhost:8081/api/clientes/buscar?q="
+                            + java.net.URLEncoder.encode(newVal, "UTF-8");
+                    HttpRequest req = HttpRequest.newBuilder()
+                            .uri(URI.create(url)).GET().build();
+                    HttpResponse<String> resp = httpClient.send(req,
+                            HttpResponse.BodyHandlers.ofString());
+                    List<Cliente> resultados = mapper.readValue(resp.body(),
+                            new TypeReference<>() {
+                            });
+                    Platform.runLater(() -> {
+                        listaClientes.getItems().setAll(resultados);
+                        boolean hayResultados = !resultados.isEmpty();
+                        listaClientes.setVisible(hayResultados);
+                        listaClientes.setManaged(hayResultados);
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                listaClientes.setVisible(false);
+                listaClientes.setManaged(false);
+            }
+        });
+
+        // Selección de cliente de la lista
+        listaClientes.setCellFactory(lv -> new javafx.scene.control.ListCell<>() {
+            @Override
+            protected void updateItem(Cliente c, boolean empty) {
+                super.updateItem(c, empty);
+                if (empty || c == null)
+                    setText(null);
+                else
+                    setText(c.getNombre() + " " + c.getApellidos() + " · " + c.getDni());
+            }
+        });
+        listaClientes.setOnMouseClicked(e -> {
+            Cliente sel = listaClientes.getSelectionModel().getSelectedItem();
+            if (sel != null) {
+                clienteSeleccionado[0] = sel;
+                txtBuscarCliente.setText(sel.getNombre() + " " + sel.getApellidos());
+                lblClienteSeleccionado.setText("✓ Cliente existente seleccionado");
+                listaClientes.setVisible(false);
+                listaClientes.setManaged(false);
+            }
+        });
+
+        // Campos nuevo cliente
+        Label lblNuevoCliente = new Label("— O introduce datos del nuevo cliente —");
+        lblNuevoCliente.setStyle("-fx-text-fill: #888; -fx-font-size: 11px;");
+
+        HBox filaNombre = new HBox(12);
+        TextField txtNombre = new TextField();
+        txtNombre.setPromptText("Nombre");
+        TextField txtApellidos = new TextField();
+        txtApellidos.setPromptText("Apellidos");
+        filaNombre.getChildren().addAll(
+                new VBox(4, new Label("Nombre:"), txtNombre),
+                new VBox(4, new Label("Apellidos:"), txtApellidos));
+
+        HBox filaDni = new HBox(12);
+        TextField txtDni = new TextField();
+        txtDni.setPromptText("12345678A");
+        TextField txtTelefono = new TextField();
+        txtTelefono.setPromptText("+34 600 000 000");
+        filaDni.getChildren().addAll(
+                new VBox(4, new Label("DNI:"), txtDni),
+                new VBox(4, new Label("Teléfono:"), txtTelefono));
+
+        CheckBox chkVip = new CheckBox("Cliente VIP");
+
+        // Observaciones
+        TextField txtObs = new TextField();
+        txtObs.setPromptText("Observaciones (opcional)");
+
+        contenido.getChildren().addAll(
+                lblInfoHab, filaDates, filaPrecio,
+                lblSecCliente,
+                txtBuscarCliente, listaClientes, lblClienteSeleccionado,
+                lblNuevoCliente, filaNombre, filaDni, chkVip,
+                new VBox(4, new Label("Observaciones:"), txtObs));
+
+        dialog.getDialogPane().setContent(contenido);
+
+        // Acción guardar
+        dialog.getDialogPane().lookupButton(btnGuardar).addEventFilter(
+                javafx.event.ActionEvent.ACTION, event -> {
+
+                    // Validación básica
+                    if (dpEntrada.getValue() == null || dpSalida.getValue() == null) {
+                        mostrarError("Introduce las fechas de entrada y salida.");
+                        event.consume();
+                        return;
+                    }
+                    if (dpSalida.getValue().isBefore(dpEntrada.getValue())
+                            || dpSalida.getValue().isEqual(dpEntrada.getValue())) {
+                        mostrarError("La fecha de salida debe ser posterior a la de entrada.");
+                        event.consume();
+                        return;
+                    }
+                    if (clienteSeleccionado[0] == null
+                            && (txtNombre.getText().isBlank() || txtDni.getText().isBlank())) {
+                        mostrarError("Introduce al menos nombre y DNI del huésped.");
+                        event.consume();
+                        return;
+                    }
+
+                    // Construir request
+                    try {
+                        java.util.Map<String, Object> body = new java.util.HashMap<>();
+
+                        if (clienteSeleccionado[0] != null) {
+                            body.put("idCliente", clienteSeleccionado[0].getIdCliente());
+                        } else {
+                            body.put("nombre", txtNombre.getText().trim());
+                            body.put("apellidos", txtApellidos.getText().trim());
+                            body.put("dni", txtDni.getText().trim());
+                            body.put("telefono", txtTelefono.getText().trim());
+                            body.put("vip", chkVip.isSelected());
+                        }
+
+                        body.put("idHabitacion", habitacion.getIdHabitacion());
+                        body.put("fechaEntrada", dpEntrada.getValue().toString());
+                        body.put("fechaSalida", dpSalida.getValue().toString());
+                        body.put("precioNoche", new java.math.BigDecimal(txtPrecio.getText().trim()));
+                        body.put("numAdultos", 1);
+                        body.put("observaciones", txtObs.getText().trim());
+
+                        String json = mapper.writeValueAsString(body);
+
+                        HttpRequest req = HttpRequest.newBuilder()
+                                .uri(URI.create("http://localhost:8081/api/dashboard/reservas"))
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(json))
+                                .build();
+
+                        HttpResponse<String> resp = httpClient.send(req,
+                                HttpResponse.BodyHandlers.ofString());
+
+                        if (resp.statusCode() == 200) {
+                            cargarCalendario(); // Refresca el calendario
+                        } else {
+                            mostrarError("Error al guardar: " + resp.body());
+                            event.consume();
+                        }
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        mostrarError("Error inesperado: " + ex.getMessage());
+                        event.consume();
+                    }
+                });
+
+        dialog.showAndWait();
+    }
+
+    private void mostrarError(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 
     private void cargarCalendario() {
@@ -100,13 +407,6 @@ public class DashboardController {
                 List<ReservaCalendarioDTO> reservas = mapper.readValue(respCal.body(),
                         new TypeReference<>() {
                         });
-
-                System.out.println("Reservas recibidas: " + reservas.size());
-                for (ReservaCalendarioDTO r : reservas) {
-                    System.out.println("  -> Hab " + r.getNumeroHabitacion()
-                            + " | " + r.getFechaEntrada()
-                            + " | idHab=" + r.getIdHabitacion());
-                }
 
                 Platform.runLater(() -> renderizarCalendario(habitaciones, reservas, mes, anio));
 
@@ -215,6 +515,10 @@ public class DashboardController {
                 if (esFinSemana)
                     celdaVacia.getStyleClass().add("celda-vacia-fin-semana");
                 celdaVacia.setMinSize(COL_DIA, ROW_HAB);
+                final LocalDate fechaCelda = fecha;
+                final Habitacion habCelda = hab;
+                celdaVacia.setOnMouseClicked(e -> abrirFormularioReserva(habCelda, fechaCelda));
+                celdaVacia.setStyle("-fx-cursor: hand;");
                 gridCalendario.add(celdaVacia, d, fila);
             }
         }
@@ -307,6 +611,8 @@ public class DashboardController {
         Tooltip tooltip = new Tooltip(tooltipTexto);
         tooltip.setShowDelay(Duration.millis(300));
         Tooltip.install(bloque, tooltip);
+
+        bloque.setOnMouseClicked(e -> abrirDetalle(reserva));
 
         return bloque;
     }

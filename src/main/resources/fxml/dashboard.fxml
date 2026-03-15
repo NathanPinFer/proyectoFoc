@@ -2,12 +2,13 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.hotel.gestion_hotelera.controller.DashboardController"
-            stylesheets="@../css/dashboard.css">
+    fx:controller="com.hotel.gestion_hotelera.controller.DashboardController"
+    stylesheets="@../css/dashboard.css"
+    maxWidth="Infinity"
+    maxHeight="Infinity">
 
     <!-- CABECERA -->
     <top>
@@ -15,15 +16,15 @@
             <HBox alignment="CENTER_LEFT" spacing="16">
                 <Label text="Panel Principal" styleClass="titulo-pagina"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="btnMesAnterior" text="◀" styleClass="btn-nav"
-                        onAction="#mesAnterior"/>
-                <Label fx:id="lblMesAnio" text="Marzo 2026" styleClass="label-mes"/>
-                <Button fx:id="btnMesSiguiente" text="▶" styleClass="btn-nav"
-                        onAction="#mesSiguiente"/>
+                <HBox alignment="CENTER" spacing="8">
+                    <Button fx:id="btnMesAnterior" text="◀" styleClass="btn-nav"
+                            onAction="#mesAnterior"/>
+                    <Label fx:id="lblMesAnio" text="Marzo 2026" styleClass="label-mes"/>
+                    <Button fx:id="btnMesSiguiente" text="▶" styleClass="btn-nav"
+                            onAction="#mesSiguiente"/>
+                </HBox>
             </HBox>
-
-            <!-- Leyenda -->
-            <HBox spacing="20" alignment="CENTER_LEFT">
+            <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 8 0 0 0;">
                 <HBox spacing="6" alignment="CENTER_LEFT">
                     <Pane styleClass="leyenda-box, color-checkin"/>
                     <Label text="Check-in hoy" styleClass="leyenda-texto"/>
@@ -44,12 +45,70 @@
         </VBox>
     </top>
 
-    <!-- CALENDARIO -->
+    <!-- CENTRO: calendario + panel detalle -->
     <center>
-        <ScrollPane fx:id="scrollPane" fitToWidth="true"
-                    styleClass="scroll-calendario">
-            <GridPane fx:id="gridCalendario" styleClass="grid-calendario"/>
-        </ScrollPane>
+        <HBox>
+            <!-- Calendario -->
+            <ScrollPane fx:id="scrollPane" fitToWidth="false"
+                        styleClass="scroll-calendario"
+                        HBox.hgrow="ALWAYS">
+                <GridPane fx:id="gridCalendario" styleClass="grid-calendario"/>
+            </ScrollPane>
+
+            <!-- Panel lateral de detalle (oculto por defecto) -->
+            <VBox fx:id="panelDetalle" styleClass="panel-detalle"
+                  minWidth="280" maxWidth="280"
+                  managed="false" visible="false">
+                <padding><Insets top="20" right="16" bottom="20" left="16"/></padding>
+
+                <!-- Cabecera panel -->
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label fx:id="lblDetalleTitulo" text="Detalle reserva"
+                           styleClass="detalle-titulo" HBox.hgrow="ALWAYS"/>
+                    <Button text="✕" styleClass="btn-cerrar-detalle"
+                            onAction="#cerrarDetalle"/>
+                </HBox>
+
+                <Separator style="-fx-padding: 8 0 8 0;"/>
+
+                <!-- Estado -->
+                <Label fx:id="lblDetalleEstado" text=""
+                       styleClass="detalle-estado-badge"/>
+
+                <VBox spacing="12" style="-fx-padding: 16 0 0 0;">
+
+                    <!-- Habitación -->
+                    <VBox styleClass="detalle-seccion">
+                        <Label text="HABITACIÓN" styleClass="detalle-seccion-titulo"/>
+                        <Label fx:id="lblDetalleHabitacion" text="" styleClass="detalle-valor-grande"/>
+                        <Label fx:id="lblDetalleTipoHab" text="" styleClass="detalle-valor-secundario"/>
+                    </VBox>
+
+                    <!-- Cliente -->
+                    <VBox styleClass="detalle-seccion">
+                        <Label text="HUÉSPED" styleClass="detalle-seccion-titulo"/>
+                        <Label fx:id="lblDetalleCliente" text="" styleClass="detalle-valor-grande"/>
+                        <Label fx:id="lblDetalleVip" text="" styleClass="detalle-vip"/>
+                    </VBox>
+
+                    <!-- Fechas -->
+                    <VBox styleClass="detalle-seccion">
+                        <Label text="FECHAS" styleClass="detalle-seccion-titulo"/>
+                        <Label fx:id="lblDetalleFechaEntrada" text="" styleClass="detalle-valor"/>
+                        <Label fx:id="lblDetalleFechaSalida" text="" styleClass="detalle-valor"/>
+                        <Label fx:id="lblDetalleNoches" text="" styleClass="detalle-valor-secundario"/>
+                    </VBox>
+
+                    <!-- Precio -->
+                    <VBox styleClass="detalle-seccion">
+                        <Label text="IMPORTE" styleClass="detalle-seccion-titulo"/>
+                        <Label fx:id="lblDetallePrecioNoche" text="" styleClass="detalle-valor"/>
+                        <Label fx:id="lblDetalleSubtotal" text="" styleClass="detalle-valor-grande"/>
+                    </VBox>
+
+                </VBox>
+            </VBox>
+        </HBox>
     </center>
 
 </BorderPane>

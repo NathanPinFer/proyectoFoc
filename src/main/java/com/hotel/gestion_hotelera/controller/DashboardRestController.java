@@ -1,8 +1,12 @@
 package com.hotel.gestion_hotelera.controller;
 
 import com.hotel.gestion_hotelera.dto.ReservaCalendarioDTO;
+import com.hotel.gestion_hotelera.dto.ReservaRequestDTO;
 import com.hotel.gestion_hotelera.model.Habitacion;
+import com.hotel.gestion_hotelera.model.Reserva;
 import com.hotel.gestion_hotelera.service.DashboardService;
+import com.hotel.gestion_hotelera.service.ReservaService;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -13,14 +17,22 @@ import java.util.List;
 public class DashboardRestController {
 
     private final DashboardService dashboardService;
+    private final ReservaService reservaService;
 
-    public DashboardRestController(DashboardService dashboardService) {
+    public DashboardRestController(DashboardService dashboardService,
+            ReservaService reservaService) {
         this.dashboardService = dashboardService;
+        this.reservaService = reservaService;
     }
 
     @GetMapping("/habitaciones")
     public List<Habitacion> getHabitaciones() {
         return dashboardService.obtenerTodasHabitaciones();
+    }
+
+    @PostMapping("/reservas")
+    public Reserva crearReserva(@RequestBody ReservaRequestDTO dto) {
+        return reservaService.crearReserva(dto);
     }
 
     @GetMapping("/calendario")
@@ -38,4 +50,3 @@ public class DashboardRestController {
         return dashboardService.obtenerCalendario(mes, anio);
     }
 }
-

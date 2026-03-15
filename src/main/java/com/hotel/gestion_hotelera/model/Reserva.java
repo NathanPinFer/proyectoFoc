@@ -22,6 +22,12 @@ public class Reserva {
     @Column(name = "estado_reserva", nullable = false)
     private String estadoReserva;
 
+    @Column(name = "num_adultos")
+    private Integer numAdultos;
+
+    @Column(name = "num_ninos")
+    private Integer numNinos;
+
     @Column(name = "fecha_entrada", nullable = false)
     private LocalDate fechaEntrada;
 

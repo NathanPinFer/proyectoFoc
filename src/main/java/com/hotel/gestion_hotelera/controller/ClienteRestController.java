@@ -20,8 +20,8 @@ public class ClienteRestController {
     }
 
     @GetMapping("/buscar")
-    public List<Cliente> buscar(@RequestParam String texto) {
-        return clienteService.buscarPorNombre(texto);
+    public List<Cliente> buscar(@RequestParam String q) {
+        return clienteService.buscarPorNombre(q);
     }
 
     @GetMapping("/vip")
@@ -32,7 +32,8 @@ public class ClienteRestController {
     @GetMapping("/{id}")
     public ResponseEntity<Cliente> obtenerPorId(@PathVariable Integer id) {
         Cliente cliente = clienteService.obtenerPorId(id);
-        if (cliente == null) return ResponseEntity.notFound().build();
+        if (cliente == null)
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok(cliente);
     }
 
@@ -43,14 +44,16 @@ public class ClienteRestController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizar(@PathVariable Integer id, @RequestBody Cliente cliente) {
-        if (clienteService.obtenerPorId(id) == null) return ResponseEntity.notFound().build();
+        if (clienteService.obtenerPorId(id) == null)
+            return ResponseEntity.notFound().build();
         cliente.setIdCliente(id);
         return ResponseEntity.ok(clienteService.guardar(cliente));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
-        if (clienteService.obtenerPorId(id) == null) return ResponseEntity.notFound().build();
+        if (clienteService.obtenerPorId(id) == null)
+            return ResponseEntity.notFound().build();
         clienteService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
