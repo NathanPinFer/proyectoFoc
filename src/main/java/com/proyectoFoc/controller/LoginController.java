@@ -52,7 +52,7 @@ public class LoginController {
             System.out.println("✅ Login exitoso: " + empleado.getNombre() + " - " + empleado.getCargo());
 
             // Cambiar a vista Dashboard
-            stageManager.switchScene(FxmlView.DASHBOARD);
+            stageManager.switchScene(FxmlView.CLIENTES);
 
         } else {
             // Login fallido
@@ -65,5 +65,21 @@ public class LoginController {
     private void mostrarError(String mensaje) {
         errorLabel.setText(mensaje);
         errorLabel.setVisible(true);
+    }
+
+    @FXML
+    public void initialize() {
+        // Permitir login con tecla Enter en cualquier campo
+        usuarioField.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                handleLogin();
+            }
+        });
+
+        passwordField.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                handleLogin();
+            }
+        });
     }
 }
