@@ -188,6 +188,7 @@
     <!-- MODAL DE FORMULARIO (CREAR/EDITAR) -->
     <StackPane fx:id="modalFormContainer" visible="false" managed="false" 
                style="-fx-background-color: rgba(0,0,0,0.6);">
+        <VBox styleClass="modal-content" maxWidth="700" maxHeight="-Infinity" spacing="20">
             <!-- Header -->
             <HBox styleClass="modal-header" alignment="CENTER_LEFT">
                 <Label fx:id="modalFormTitle" text="Nuevo Cliente" styleClass="modal-title">
@@ -288,6 +289,7 @@
     <!-- MODAL DE DETALLES - CENTRADO Y ALTURA AUTOMÁTICA -->
     <StackPane fx:id="modalDetallesContainer" visible="false" managed="false"
                alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.6);">
+        <VBox styleClass="modal-content" maxWidth="600" maxHeight="-Infinity" spacing="20"
               style="-fx-max-height: 80vh;">
             <HBox styleClass="modal-header" alignment="CENTER_LEFT">
                 <Label text="Detalles del Cliente" styleClass="modal-title">
