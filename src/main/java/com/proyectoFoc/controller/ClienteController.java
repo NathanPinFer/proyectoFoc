@@ -522,7 +522,6 @@ public class ClienteController {
             mostrarErrorModal("El formato del email no es válido");
             return false;
         }
-
         // Validar DNI
         String dni = dniField.getText().trim();
         if (!dni.matches("^\\d{8}[a-zA-Z]$")) {
