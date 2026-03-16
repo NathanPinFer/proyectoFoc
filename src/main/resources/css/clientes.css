@@ -403,3 +403,17 @@
     -fx-background-color: #ECF0F1;
     -fx-background-radius: 5px;
 }
+
+/* ============================================= */
+/* OTROS AJUSTES */
+/* ============================================= */
+/* Quitar color y bordes a las filas sin datos */
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Evitar que se pongan grises al pasar el ratón por las filas vacías */
+.table-row-cell:empty:hover {
+    -fx-background-color: transparent;
+}
