@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum FxmlView {
     LOGIN("/fxml/login.fxml", "Login - Hotel Management"),
-    DASHBOARD("/fxml/dashboard.fxml", "Dashboard - Hotel Management");
+    DASHBOARD("/fxml/dashboard.fxml", "Dashboard - Hotel Management"),
+    CLIENTES("/fxml/clientes.fxml", "Clientes - Hotel Management");
 
     private final String fxmlFile;
     private final String title;
@@ -14,5 +15,4 @@ public enum FxmlView {
         this.fxmlFile = fxmlFile;
         this.title = title;
     }
-
 }
