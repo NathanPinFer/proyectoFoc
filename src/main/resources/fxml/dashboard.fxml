@@ -133,21 +133,21 @@
                         <GridPane fx:id="gridCalendario" style="-fx-background-color: white;"/>
                     </ScrollPane>
 
+                    <!-- PANEL DETALLE - SIN SEPARADORES -->
                     <VBox fx:id="panelDetalle" minWidth="300" maxWidth="300"
                           managed="false" visible="false"
                           styleClass="clientes-table-container">
                         <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
-                        <HBox alignment="CENTER_LEFT" spacing="8">
+                        <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 20 0;">
                             <Label fx:id="lblDetalleTitulo" text="Detalle reserva"
                                    style="-fx-font-size: 20px; -fx-font-weight: bold;"
                                    HBox.hgrow="ALWAYS"/>
                             <Button text="✕" styleClass="btn-close" onAction="#cerrarDetalle"/>
                         </HBox>
 
-                        <Separator style="-fx-padding: 12 0 12 0;"/>
-
-                        <Label fx:id="lblDetalleEstado" text=""/>
+                        <!-- ESTADO (sin separador antes) -->
+                        <Label fx:id="lblDetalleEstado" text="" style="-fx-padding: 0 0 8 0;"/>
 
                         <VBox spacing="18" style="-fx-padding: 12 0 0 0;">
                             <VBox spacing="6">

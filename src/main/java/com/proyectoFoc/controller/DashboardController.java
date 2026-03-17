@@ -15,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -74,10 +73,6 @@ public class DashboardController {
         cargarCalendario();
     }
 
-    // ============================================
-    // NAVEGACIÓN
-    // ============================================
-    
     @FXML
     private void navegarClientes() {
         stageManager.switchScene(FxmlView.CLIENTES);
@@ -88,10 +83,6 @@ public class DashboardController {
         authService.logout();
         stageManager.switchScene(FxmlView.LOGIN);
     }
-
-    // ============================================
-    // CALENDARIO
-    // ============================================
 
     @FXML
     private void mesAnterior() {
@@ -112,7 +103,6 @@ public class DashboardController {
                 .getDisplayName(TextStyle.FULL, new Locale("es", "ES"))
                 + " " + anio);
 
-        // Obtener datos
         List<Habitacion> habitaciones = habitacionService.obtenerTodas();
         List<ReservaCalendarioDTO> reservas = reservaService.obtenerCalendario(mes, anio);
 
@@ -132,29 +122,24 @@ public class DashboardController {
         int diasEnMes = ym.lengthOfMonth();
         LocalDate hoy = LocalDate.now();
 
-        // ── Columna 0: habitaciones ──
         ColumnConstraints ccHab = new ColumnConstraints(COL_HABITACION);
         ccHab.setHgrow(Priority.NEVER);
         gridCalendario.getColumnConstraints().add(ccHab);
 
-        // ── Columnas 1..N: días ──
         for (int d = 1; d <= diasEnMes; d++) {
             ColumnConstraints cc = new ColumnConstraints(COL_DIA);
             cc.setHgrow(Priority.NEVER);
             gridCalendario.getColumnConstraints().add(cc);
         }
 
-        // ── Fila 0: cabecera ──
         RowConstraints rcHeader = new RowConstraints(ROW_HEADER);
         gridCalendario.getRowConstraints().add(rcHeader);
 
-        // Esquina superior izquierda
         Pane esquina = new Pane();
         esquina.setStyle("-fx-background-color: #34495E; -fx-border-color: #2C3E50; -fx-border-width: 0 1 1 0;");
         esquina.setMinSize(COL_HABITACION, ROW_HEADER);
         gridCalendario.add(esquina, 0, 0);
 
-        // Cabecera de días
         for (int d = 1; d <= diasEnMes; d++) {
             LocalDate fecha = LocalDate.of(anio, mes, d);
             boolean esHoy = fecha.equals(hoy);
@@ -177,7 +162,6 @@ public class DashboardController {
             gridCalendario.add(celdaDia, d, 0);
         }
 
-        // ── Filas de habitaciones ──
         for (int i = 0; i < habitaciones.size(); i++) {
             Habitacion hab = habitaciones.get(i);
             int fila = i + 1;
@@ -185,7 +169,6 @@ public class DashboardController {
             RowConstraints rc = new RowConstraints(ROW_HAB);
             gridCalendario.getRowConstraints().add(rc);
 
-            // Celda nombre habitación
             VBox celdaHab = new VBox(2);
             celdaHab.setAlignment(Pos.CENTER_LEFT);
             celdaHab.setStyle("-fx-background-color: #34495E; -fx-border-color: #2C3E50; -fx-border-width: 0 1 1 0;");
@@ -201,7 +184,6 @@ public class DashboardController {
             celdaHab.getChildren().addAll(lblNum, lblTipo);
             gridCalendario.add(celdaHab, 0, fila);
 
-            // Celdas vacías para cada día
             for (int d = 1; d <= diasEnMes; d++) {
                 LocalDate fecha = LocalDate.of(anio, mes, d);
                 boolean esFinSemana = fecha.getDayOfWeek() == DayOfWeek.SATURDAY
@@ -212,7 +194,6 @@ public class DashboardController {
                                   "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
                 celdaVacia.setMinSize(COL_DIA, ROW_HAB);
                 
-                // Click para crear reserva
                 final LocalDate fechaCelda = fecha;
                 final Habitacion habCelda = hab;
                 celdaVacia.setOnMouseClicked(e -> abrirFormularioReserva(habCelda, fechaCelda));
@@ -222,9 +203,7 @@ public class DashboardController {
             }
         }
 
-        // ── Bloques de reserva ──
         for (ReservaCalendarioDTO reserva : reservas) {
-            // Encontrar fila de la habitación
             int filaHab = -1;
             for (int i = 0; i < habitaciones.size(); i++) {
                 if (habitaciones.get(i).getIdHabitacion().equals(reserva.getIdHabitacion())) {
@@ -234,7 +213,6 @@ public class DashboardController {
             }
             if (filaHab == -1) continue;
 
-            // Calcular columna inicio y span
             LocalDate inicioMes = LocalDate.of(anio, mes, 1);
             LocalDate finMes = LocalDate.of(anio, mes, diasEnMes);
 
@@ -247,7 +225,6 @@ public class DashboardController {
             int span = (int) (bloqueFin.toEpochDay() - bloqueInicio.toEpochDay());
             if (span < 1) span = 1;
 
-            // Crear bloque visual
             HBox bloque = crearBloqueReserva(reserva, span);
             gridCalendario.add(bloque, colInicio, filaHab);
             GridPane.setColumnSpan(bloque, span);
@@ -261,7 +238,6 @@ public class DashboardController {
         bloque.setMinHeight(ROW_HAB - 8);
         bloque.setPadding(new Insets(3, 6, 3, 6));
 
-        // Color según estado
         String color = switch (reserva.getEstadoBloque()) {
             case "CHECKIN_HOY" -> "#27ae60";
             case "EN_CURSO" -> "#2980b9";
@@ -273,7 +249,6 @@ public class DashboardController {
         VBox textos = new VBox(1);
         textos.setAlignment(Pos.CENTER_LEFT);
 
-        // Nombre + estrella VIP
         String nombreTexto = reserva.getNombreCliente() + " " + reserva.getApellidosCliente();
         if (Boolean.TRUE.equals(reserva.getClienteVip())) {
             nombreTexto = "★ " + nombreTexto;
@@ -292,10 +267,6 @@ public class DashboardController {
 
         return bloque;
     }
-
-    // ============================================
-    // PANEL DETALLE
-    // ============================================
 
     private void abrirDetalle(ReservaCalendarioDTO reserva) {
         lblDetalleTitulo.setText("Reserva #" + reserva.getIdReserva());
@@ -343,10 +314,6 @@ public class DashboardController {
         panelDetalle.setManaged(false);
     }
 
-    // ============================================
-    // FORMULARIO NUEVA RESERVA
-    // ============================================
-
     private void abrirFormularioReserva(Habitacion habitacion, LocalDate fecha) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Nueva Reserva — Hab. " + habitacion.getNumeroHabitacion());
@@ -360,13 +327,11 @@ public class DashboardController {
         contenido.setPadding(new Insets(20));
         contenido.setStyle("-fx-background-color: white;");
 
-        // Info habitación
         Label lblInfoHab = new Label("Habitación " + habitacion.getNumeroHabitacion()
                 + " · " + habitacion.getTipoHabitacion().getNombre()
                 + " · " + habitacion.getTipoHabitacion().getPrecioBase() + "€/noche");
         lblInfoHab.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2C3E50;");
 
-        // Fechas
         GridPane gridFechas = new GridPane();
         gridFechas.setHgap(15);
         gridFechas.setVgap(10);
@@ -386,7 +351,6 @@ public class DashboardController {
         gridFechas.add(lblSalida, 0, 1);
         gridFechas.add(dpSalida, 1, 1);
 
-        // Precio
         Label lblPrecio = new Label("Precio/noche (€):");
         lblPrecio.setStyle("-fx-font-size: 12px; -fx-text-fill: #2C3E50;");
         TextField txtPrecio = new TextField(habitacion.getTipoHabitacion().getPrecioBase().toString());
@@ -395,11 +359,9 @@ public class DashboardController {
         HBox boxPrecio = new HBox(15);
         boxPrecio.getChildren().addAll(lblPrecio, txtPrecio);
 
-        // Separador
         Label lblSecCliente = new Label("HUÉSPED");
         lblSecCliente.setStyle("-fx-font-size: 12px; -fx-text-fill: #5a7a9a; -fx-font-weight: bold;");
 
-        // Búsqueda cliente
         TextField txtBuscarCliente = new TextField();
         txtBuscarCliente.setPromptText("Buscar cliente por nombre o DNI...");
         txtBuscarCliente.setStyle("-fx-pref-width: 100%;");
@@ -412,7 +374,6 @@ public class DashboardController {
         Label lblClienteSeleccionado = new Label("(ningún cliente seleccionado)");
         lblClienteSeleccionado.setStyle("-fx-text-fill: #95a5a6; -fx-font-style: italic;");
 
-        // Búsqueda en tiempo real
         txtBuscarCliente.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null || newVal.trim().isEmpty()) {
                 listaClientes.setVisible(false);
@@ -424,7 +385,6 @@ public class DashboardController {
             listaClientes.setVisible(!clientes.isEmpty());
         });
 
-        // Seleccionar cliente
         listaClientes.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(ClienteDTO item, boolean empty) {
@@ -485,12 +445,8 @@ public class DashboardController {
 
                     reservaService.crearReserva(reservaDTO);
 
+                    // CORREGIDO: Solo recargar calendario, SIN mensaje de confirmación
                     cargarCalendario();
-
-                    Alert success = new Alert(Alert.AlertType.INFORMATION);
-                    success.setTitle("Reserva creada");
-                    success.setHeaderText("La reserva se ha guardado correctamente");
-                    success.showAndWait();
 
                 } catch (Exception e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);

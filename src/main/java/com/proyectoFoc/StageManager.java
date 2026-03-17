@@ -25,7 +25,7 @@ public class StageManager {
     public void switchScene(FxmlView view) {
         Parent root = loadView(view.getFxmlFile());
         Scene scene = new Scene(root);
-        
+
         // Cargar CSS específico según la vista
         String cssFile = getCssFileForView(view);
         if (cssFile != null) {
@@ -39,11 +39,11 @@ public class StageManager {
         
         // Configurar tamaño de ventana según la vista
         if (view == FxmlView.LOGIN) {
-            primaryStage.setWidth(800);
-            primaryStage.setHeight(600);
+            primaryStage.setWidth(1200);
+            primaryStage.setHeight(750);
         } else {
-            primaryStage.setWidth(1400);
-            primaryStage.setHeight(900);
+            primaryStage.setWidth(1700);
+            primaryStage.setHeight(1000);
             primaryStage.setMaximized(false); // Permitir maximizar
         }
         

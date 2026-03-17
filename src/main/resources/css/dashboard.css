@@ -53,10 +53,14 @@
     -fx-border-color: #3498DB;
 }
 
+/* CRÍTICO: Los Labels dentro de menu-item heredan el color */
+.menu-item Label {
+    -fx-text-fill: inherit;
+}
+
 /* CONTENIDO PRINCIPAL */
 .main-content {
     -fx-background-color: #F5F7FA;
-    -fx-padding: 30;
 }
 
 /* TOPBAR */
@@ -126,7 +130,7 @@
 
 /* SEPARADORES */
 .separator {
-    -fx-background-color: #ECF0F1;
+    -fx-background-color: transparent;
 }
 
 /* SCROLLPANE */

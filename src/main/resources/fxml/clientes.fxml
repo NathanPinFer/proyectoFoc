@@ -64,7 +64,7 @@
                     <Button styleClass="menu-item">
                         <graphic>
                             <HBox spacing="15" alignment="CENTER_LEFT">
-                                <Label text="🧾" style="-fx-font-size: 22px;"/>
+                                <Label text="💰" style="-fx-font-size: 22px;"/>
                                 <Label text="Facturación"/>
                             </HBox>
                         </graphic>
