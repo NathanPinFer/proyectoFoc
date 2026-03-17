@@ -1,0 +1,156 @@
+/* ============================================= */
+/* DASHBOARD - CALENDARIO */
+/* Mismo estilo que clientes.css */
+/* ============================================= */
+
+/* CONTENEDOR PRINCIPAL */
+.main-container {
+    -fx-background-color: #F5F7FA;
+}
+
+/* SIDEBAR */
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #2C3E50 0%, #34495E 100%);
+}
+
+.logo {
+    -fx-padding: 30 20 30 20;
+    -fx-border-color: rgba(255, 255, 255, 0.1);
+    -fx-border-width: 0 0 1 0;
+    -fx-alignment: center;
+}
+
+.logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.menu {
+    -fx-padding: 20 0 20 0;
+    -fx-spacing: 5px;
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-padding: 15 25 15 25;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 0 4;
+    -fx-alignment: center-left;
+    -fx-font-size: 15px;
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-text-fill: white;
+}
+
+.menu-item.active {
+    -fx-background-color: rgba(52, 152, 219, 0.2);
+    -fx-text-fill: white;
+    -fx-border-color: #3498DB;
+}
+
+/* CONTENIDO PRINCIPAL */
+.main-content {
+    -fx-background-color: #F5F7FA;
+    -fx-padding: 30;
+}
+
+/* TOPBAR */
+.topbar {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 10 0;
+}
+
+.topbar-title {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+/* BOTONES PRIMARIOS */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom, #3498DB 0%, #2980B9 100%);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12 24 12 24;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 2);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom, #2980B9 0%, #21618C 100%);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #21618C;
+    -fx-translate-y: 1px;
+}
+
+/* CONTENEDOR DE TABLA */
+.clientes-table-container {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 15, 0, 0, 4);
+}
+
+/* LABELS DE FORMULARIO */
+.form-label {
+    -fx-text-fill: #5a7a9a;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 4 0;
+}
+
+/* BOTÓN CERRAR */
+.btn-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: #95a5a6;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 50%;
+    -fx-padding: 0 8 0 8;
+}
+
+.btn-close:hover {
+    -fx-background-color: #ecf0f1;
+    -fx-text-fill: #e74c3c;
+}
+
+/* SEPARADORES */
+.separator {
+    -fx-background-color: #ECF0F1;
+}
+
+/* SCROLLPANE */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:horizontal,
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:horizontal .thumb,
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(149, 165, 166, 0.5);
+    -fx-background-radius: 5px;
+}
+
+.scroll-pane .scroll-bar:horizontal .thumb:hover,
+.scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: rgba(149, 165, 166, 0.8);
+}

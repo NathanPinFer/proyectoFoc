@@ -1,16 +1,508 @@
 package com.proyectoFoc.controller;
 
+import com.proyectoFoc.FxmlView;
+import com.proyectoFoc.StageManager;
+import com.proyectoFoc.dto.ClienteDTO;
+import com.proyectoFoc.dto.ReservaCalendarioDTO;
+import com.proyectoFoc.dto.ReservaRequestDTO;
+import com.proyectoFoc.entity.Habitacion;
+import com.proyectoFoc.service.AuthService;
+import com.proyectoFoc.service.ClienteService;
+import com.proyectoFoc.service.HabitacionService;
+import com.proyectoFoc.service.ReservaService;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.util.Duration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.List;
+import java.util.Locale;
 
 @Component
-public class DashboardController implements Initializable {
+public class DashboardController {
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("Dashboard cargado correctamente.");
+    @FXML private GridPane gridCalendario;
+    @FXML private Label lblMesAnio;
+    @FXML private VBox panelDetalle;
+    @FXML private Label lblDetalleTitulo;
+    @FXML private Label lblDetalleEstado;
+    @FXML private Label lblDetalleHabitacion;
+    @FXML private Label lblDetalleTipoHab;
+    @FXML private Label lblDetalleCliente;
+    @FXML private Label lblDetalleVip;
+    @FXML private Label lblDetalleFechaEntrada;
+    @FXML private Label lblDetalleFechaSalida;
+    @FXML private Label lblDetalleNoches;
+    @FXML private Label lblDetallePrecioNoche;
+    @FXML private Label lblDetalleSubtotal;
+
+    @Autowired
+    private StageManager stageManager;
+
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private HabitacionService habitacionService;
+
+    @Autowired
+    private ReservaService reservaService;
+
+    @Autowired
+    private ClienteService clienteService;
+
+    private YearMonth mesActual;
+    
+    private static final int COL_HABITACION = 130;
+    private static final int COL_DIA = 38;
+    private static final int ROW_HEADER = 36;
+    private static final int ROW_HAB = 44;
+
+    @FXML
+    public void initialize() {
+        mesActual = YearMonth.now();
+        cargarCalendario();
+    }
+
+    // ============================================
+    // NAVEGACIÓN
+    // ============================================
+    
+    @FXML
+    private void navegarClientes() {
+        stageManager.switchScene(FxmlView.CLIENTES);
+    }
+
+    @FXML
+    private void cerrarSesion() {
+        authService.logout();
+        stageManager.switchScene(FxmlView.LOGIN);
+    }
+
+    // ============================================
+    // CALENDARIO
+    // ============================================
+
+    @FXML
+    private void mesAnterior() {
+        mesActual = mesActual.minusMonths(1);
+        cargarCalendario();
+    }
+
+    @FXML
+    private void mesSiguiente() {
+        mesActual = mesActual.plusMonths(1);
+        cargarCalendario();
+    }
+
+    private void cargarCalendario() {
+        int mes = mesActual.getMonthValue();
+        int anio = mesActual.getYear();
+        lblMesAnio.setText(mesActual.getMonth()
+                .getDisplayName(TextStyle.FULL, new Locale("es", "ES"))
+                + " " + anio);
+
+        // Obtener datos
+        List<Habitacion> habitaciones = habitacionService.obtenerTodas();
+        List<ReservaCalendarioDTO> reservas = reservaService.obtenerCalendario(mes, anio);
+
+        renderizarCalendario(habitaciones, reservas, mes, anio);
+    }
+
+    private void renderizarCalendario(
+            List<Habitacion> habitaciones,
+            List<ReservaCalendarioDTO> reservas,
+            int mes, int anio) {
+
+        gridCalendario.getChildren().clear();
+        gridCalendario.getColumnConstraints().clear();
+        gridCalendario.getRowConstraints().clear();
+
+        YearMonth ym = YearMonth.of(anio, mes);
+        int diasEnMes = ym.lengthOfMonth();
+        LocalDate hoy = LocalDate.now();
+
+        // ── Columna 0: habitaciones ──
+        ColumnConstraints ccHab = new ColumnConstraints(COL_HABITACION);
+        ccHab.setHgrow(Priority.NEVER);
+        gridCalendario.getColumnConstraints().add(ccHab);
+
+        // ── Columnas 1..N: días ──
+        for (int d = 1; d <= diasEnMes; d++) {
+            ColumnConstraints cc = new ColumnConstraints(COL_DIA);
+            cc.setHgrow(Priority.NEVER);
+            gridCalendario.getColumnConstraints().add(cc);
+        }
+
+        // ── Fila 0: cabecera ──
+        RowConstraints rcHeader = new RowConstraints(ROW_HEADER);
+        gridCalendario.getRowConstraints().add(rcHeader);
+
+        // Esquina superior izquierda
+        Pane esquina = new Pane();
+        esquina.setStyle("-fx-background-color: #34495E; -fx-border-color: #2C3E50; -fx-border-width: 0 1 1 0;");
+        esquina.setMinSize(COL_HABITACION, ROW_HEADER);
+        gridCalendario.add(esquina, 0, 0);
+
+        // Cabecera de días
+        for (int d = 1; d <= diasEnMes; d++) {
+            LocalDate fecha = LocalDate.of(anio, mes, d);
+            boolean esHoy = fecha.equals(hoy);
+
+            VBox celdaDia = new VBox();
+            celdaDia.setAlignment(Pos.CENTER);
+            celdaDia.setStyle("-fx-background-color: " + (esHoy ? "#E8F4F8" : "#F8F9FA") + 
+                            "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
+            celdaDia.setMinSize(COL_DIA, ROW_HEADER);
+
+            Label lblDia = new Label(String.valueOf(d));
+            lblDia.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
+
+            String diaSemana = fecha.getDayOfWeek()
+                    .getDisplayName(TextStyle.SHORT, new Locale("es", "ES"));
+            Label lblDiaSem = new Label(diaSemana.substring(0, 1).toUpperCase());
+            lblDiaSem.setStyle("-fx-font-weight: normal; -fx-font-size: 9px; -fx-text-fill: #2C3E50;");
+
+            celdaDia.getChildren().addAll(lblDia, lblDiaSem);
+            gridCalendario.add(celdaDia, d, 0);
+        }
+
+        // ── Filas de habitaciones ──
+        for (int i = 0; i < habitaciones.size(); i++) {
+            Habitacion hab = habitaciones.get(i);
+            int fila = i + 1;
+
+            RowConstraints rc = new RowConstraints(ROW_HAB);
+            gridCalendario.getRowConstraints().add(rc);
+
+            // Celda nombre habitación
+            VBox celdaHab = new VBox(2);
+            celdaHab.setAlignment(Pos.CENTER_LEFT);
+            celdaHab.setStyle("-fx-background-color: #34495E; -fx-border-color: #2C3E50; -fx-border-width: 0 1 1 0;");
+            celdaHab.setMinSize(COL_HABITACION, ROW_HAB);
+            celdaHab.setPadding(new Insets(0, 8, 0, 10));
+
+            Label lblNum = new Label("Hab. " + hab.getNumeroHabitacion());
+            lblNum.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold;");
+
+            Label lblTipo = new Label(hab.getTipoHabitacion().getNombre());
+            lblTipo.setStyle("-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 10px;");
+
+            celdaHab.getChildren().addAll(lblNum, lblTipo);
+            gridCalendario.add(celdaHab, 0, fila);
+
+            // Celdas vacías para cada día
+            for (int d = 1; d <= diasEnMes; d++) {
+                LocalDate fecha = LocalDate.of(anio, mes, d);
+                boolean esFinSemana = fecha.getDayOfWeek() == DayOfWeek.SATURDAY
+                        || fecha.getDayOfWeek() == DayOfWeek.SUNDAY;
+
+                Pane celdaVacia = new Pane();
+                celdaVacia.setStyle("-fx-background-color: " + (esFinSemana ? "#FAFAFA" : "white") +
+                                  "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
+                celdaVacia.setMinSize(COL_DIA, ROW_HAB);
+                
+                // Click para crear reserva
+                final LocalDate fechaCelda = fecha;
+                final Habitacion habCelda = hab;
+                celdaVacia.setOnMouseClicked(e -> abrirFormularioReserva(habCelda, fechaCelda));
+                celdaVacia.setStyle(celdaVacia.getStyle() + " -fx-cursor: hand;");
+                
+                gridCalendario.add(celdaVacia, d, fila);
+            }
+        }
+
+        // ── Bloques de reserva ──
+        for (ReservaCalendarioDTO reserva : reservas) {
+            // Encontrar fila de la habitación
+            int filaHab = -1;
+            for (int i = 0; i < habitaciones.size(); i++) {
+                if (habitaciones.get(i).getIdHabitacion().equals(reserva.getIdHabitacion())) {
+                    filaHab = i + 1;
+                    break;
+                }
+            }
+            if (filaHab == -1) continue;
+
+            // Calcular columna inicio y span
+            LocalDate inicioMes = LocalDate.of(anio, mes, 1);
+            LocalDate finMes = LocalDate.of(anio, mes, diasEnMes);
+
+            LocalDate bloqueInicio = reserva.getFechaEntrada().isBefore(inicioMes)
+                    ? inicioMes : reserva.getFechaEntrada();
+            LocalDate bloqueFin = reserva.getFechaSalida().isAfter(finMes)
+                    ? finMes : reserva.getFechaSalida();
+
+            int colInicio = bloqueInicio.getDayOfMonth();
+            int span = (int) (bloqueFin.toEpochDay() - bloqueInicio.toEpochDay());
+            if (span < 1) span = 1;
+
+            // Crear bloque visual
+            HBox bloque = crearBloqueReserva(reserva, span);
+            gridCalendario.add(bloque, colInicio, filaHab);
+            GridPane.setColumnSpan(bloque, span);
+        }
+    }
+
+    private HBox crearBloqueReserva(ReservaCalendarioDTO reserva, int span) {
+        HBox bloque = new HBox(4);
+        bloque.setAlignment(Pos.CENTER_LEFT);
+        bloque.setMaxHeight(ROW_HAB - 8);
+        bloque.setMinHeight(ROW_HAB - 8);
+        bloque.setPadding(new Insets(3, 6, 3, 6));
+
+        // Color según estado
+        String color = switch (reserva.getEstadoBloque()) {
+            case "CHECKIN_HOY" -> "#27ae60";
+            case "EN_CURSO" -> "#2980b9";
+            case "CHECKOUT_HOY" -> "#e67e22";
+            default -> "#8e44ad";
+        };
+        bloque.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 4; -fx-cursor: hand;");
+
+        VBox textos = new VBox(1);
+        textos.setAlignment(Pos.CENTER_LEFT);
+
+        // Nombre + estrella VIP
+        String nombreTexto = reserva.getNombreCliente() + " " + reserva.getApellidosCliente();
+        if (Boolean.TRUE.equals(reserva.getClienteVip())) {
+            nombreTexto = "★ " + nombreTexto;
+        }
+        Label lblNombre = new Label(nombreTexto);
+        lblNombre.setStyle("-fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold;");
+        lblNombre.setMaxWidth((span * COL_DIA) - 12.0);
+
+        Label lblPrecio = new Label(reserva.getPrecioNoche() + "€/noche");
+        lblPrecio.setStyle("-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 9px;");
+
+        textos.getChildren().addAll(lblNombre, lblPrecio);
+        bloque.getChildren().add(textos);
+
+        bloque.setOnMouseClicked(e -> abrirDetalle(reserva));
+
+        return bloque;
+    }
+
+    // ============================================
+    // PANEL DETALLE
+    // ============================================
+
+    private void abrirDetalle(ReservaCalendarioDTO reserva) {
+        lblDetalleTitulo.setText("Reserva #" + reserva.getIdReserva());
+
+        String estadoTexto = switch (reserva.getEstadoBloque()) {
+            case "CHECKIN_HOY" -> "CHECK-IN HOY";
+            case "CHECKOUT_HOY" -> "CHECK-OUT HOY";
+            case "EN_CURSO" -> "EN CURSO";
+            default -> "RESERVA FUTURA";
+        };
+        String estadoColor = switch (reserva.getEstadoBloque()) {
+            case "CHECKIN_HOY" -> "#27ae60";
+            case "CHECKOUT_HOY" -> "#e67e22";
+            case "EN_CURSO" -> "#2980b9";
+            default -> "#8e44ad";
+        };
+        lblDetalleEstado.setText(estadoTexto);
+        lblDetalleEstado.setStyle("-fx-background-color: " + estadoColor +
+                "; -fx-background-radius: 4; -fx-padding: 4 10 4 10; " +
+                "-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+        lblDetalleHabitacion.setText("Habitación " + reserva.getNumeroHabitacion());
+        lblDetalleTipoHab.setText(reserva.getTipoHabitacion() + " · Piso " + reserva.getPiso());
+
+        lblDetalleCliente.setText(reserva.getNombreCliente() + " " + reserva.getApellidosCliente());
+        lblDetalleVip.setText(Boolean.TRUE.equals(reserva.getClienteVip()) ? "★ Cliente VIP" : "");
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        lblDetalleFechaEntrada.setText("Entrada: " + reserva.getFechaEntrada().format(fmt));
+        lblDetalleFechaSalida.setText("Salida: " + reserva.getFechaSalida().format(fmt));
+        long noches = java.time.temporal.ChronoUnit.DAYS.between(
+                reserva.getFechaEntrada(), reserva.getFechaSalida());
+        lblDetalleNoches.setText(noches + " noche" + (noches != 1 ? "s" : ""));
+
+        lblDetallePrecioNoche.setText(reserva.getPrecioNoche() + " €/noche");
+        lblDetalleSubtotal.setText("Total: " + reserva.getSubtotal() + " €");
+
+        panelDetalle.setVisible(true);
+        panelDetalle.setManaged(true);
+    }
+
+    @FXML
+    private void cerrarDetalle() {
+        panelDetalle.setVisible(false);
+        panelDetalle.setManaged(false);
+    }
+
+    // ============================================
+    // FORMULARIO NUEVA RESERVA
+    // ============================================
+
+    private void abrirFormularioReserva(Habitacion habitacion, LocalDate fecha) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Nueva Reserva — Hab. " + habitacion.getNumeroHabitacion());
+
+        ButtonType btnGuardar = new ButtonType("Guardar", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
+        dialog.getDialogPane().setMinWidth(500);
+
+        VBox contenido = new VBox(15);
+        contenido.setPadding(new Insets(20));
+        contenido.setStyle("-fx-background-color: white;");
+
+        // Info habitación
+        Label lblInfoHab = new Label("Habitación " + habitacion.getNumeroHabitacion()
+                + " · " + habitacion.getTipoHabitacion().getNombre()
+                + " · " + habitacion.getTipoHabitacion().getPrecioBase() + "€/noche");
+        lblInfoHab.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #2C3E50;");
+
+        // Fechas
+        GridPane gridFechas = new GridPane();
+        gridFechas.setHgap(15);
+        gridFechas.setVgap(10);
+
+        Label lblEntrada = new Label("Fecha Entrada:");
+        lblEntrada.setStyle("-fx-font-size: 12px; -fx-text-fill: #2C3E50;");
+        DatePicker dpEntrada = new DatePicker(fecha);
+        dpEntrada.setStyle("-fx-pref-width: 200px;");
+
+        Label lblSalida = new Label("Fecha Salida:");
+        lblSalida.setStyle("-fx-font-size: 12px; -fx-text-fill: #2C3E50;");
+        DatePicker dpSalida = new DatePicker(fecha.plusDays(1));
+        dpSalida.setStyle("-fx-pref-width: 200px;");
+
+        gridFechas.add(lblEntrada, 0, 0);
+        gridFechas.add(dpEntrada, 1, 0);
+        gridFechas.add(lblSalida, 0, 1);
+        gridFechas.add(dpSalida, 1, 1);
+
+        // Precio
+        Label lblPrecio = new Label("Precio/noche (€):");
+        lblPrecio.setStyle("-fx-font-size: 12px; -fx-text-fill: #2C3E50;");
+        TextField txtPrecio = new TextField(habitacion.getTipoHabitacion().getPrecioBase().toString());
+        txtPrecio.setStyle("-fx-pref-width: 200px;");
+
+        HBox boxPrecio = new HBox(15);
+        boxPrecio.getChildren().addAll(lblPrecio, txtPrecio);
+
+        // Separador
+        Label lblSecCliente = new Label("HUÉSPED");
+        lblSecCliente.setStyle("-fx-font-size: 12px; -fx-text-fill: #5a7a9a; -fx-font-weight: bold;");
+
+        // Búsqueda cliente
+        TextField txtBuscarCliente = new TextField();
+        txtBuscarCliente.setPromptText("Buscar cliente por nombre o DNI...");
+        txtBuscarCliente.setStyle("-fx-pref-width: 100%;");
+
+        ListView<ClienteDTO> listaClientes = new ListView<>();
+        listaClientes.setPrefHeight(100);
+        listaClientes.setVisible(false);
+
+        final ClienteDTO[] clienteSeleccionado = {null};
+        Label lblClienteSeleccionado = new Label("(ningún cliente seleccionado)");
+        lblClienteSeleccionado.setStyle("-fx-text-fill: #95a5a6; -fx-font-style: italic;");
+
+        // Búsqueda en tiempo real
+        txtBuscarCliente.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null || newVal.trim().isEmpty()) {
+                listaClientes.setVisible(false);
+                return;
+            }
+
+            List<ClienteDTO> clientes = clienteService.buscarClientes(newVal);
+            listaClientes.getItems().setAll(clientes);
+            listaClientes.setVisible(!clientes.isEmpty());
+        });
+
+        // Seleccionar cliente
+        listaClientes.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(ClienteDTO item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getNombre() + " " + item.getApellidos() +
+                            " — " + item.getDni() +
+                            (Boolean.TRUE.equals(item.getVip()) ? " ⭐" : ""));
+                }
+            }
+        });
+
+        listaClientes.setOnMouseClicked(e -> {
+            ClienteDTO selected = listaClientes.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                clienteSeleccionado[0] = selected;
+                lblClienteSeleccionado.setText("✓ " + selected.getNombre() + " " +
+                        selected.getApellidos() + " (" + selected.getDni() + ")");
+                lblClienteSeleccionado.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
+                listaClientes.setVisible(false);
+                txtBuscarCliente.clear();
+            }
+        });
+
+        contenido.getChildren().addAll(
+                lblInfoHab,
+                new Separator(),
+                gridFechas,
+                boxPrecio,
+                new Separator(),
+                lblSecCliente,
+                txtBuscarCliente,
+                listaClientes,
+                lblClienteSeleccionado
+        );
+
+        dialog.getDialogPane().setContent(contenido);
+
+        dialog.setResultConverter(btn -> {
+            if (btn == btnGuardar) {
+                if (clienteSeleccionado[0] == null) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Cliente requerido");
+                    alert.setHeaderText("Debes seleccionar un cliente");
+                    alert.showAndWait();
+                    return null;
+                }
+
+                try {
+                    ReservaRequestDTO reservaDTO = new ReservaRequestDTO();
+                    reservaDTO.setIdHabitacion(habitacion.getIdHabitacion());
+                    reservaDTO.setIdCliente(clienteSeleccionado[0].getIdCliente());
+                    reservaDTO.setFechaEntrada(dpEntrada.getValue());
+                    reservaDTO.setFechaSalida(dpSalida.getValue());
+                    reservaDTO.setPrecioNoche(new BigDecimal(txtPrecio.getText()));
+
+                    reservaService.crearReserva(reservaDTO);
+
+                    cargarCalendario();
+
+                    Alert success = new Alert(Alert.AlertType.INFORMATION);
+                    success.setTitle("Reserva creada");
+                    success.setHeaderText("La reserva se ha guardado correctamente");
+                    success.showAndWait();
+
+                } catch (Exception e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Error al crear reserva");
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
+                }
+            }
+            return btn;
+        });
+
+        dialog.show();
     }
 }

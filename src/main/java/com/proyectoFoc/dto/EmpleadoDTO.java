@@ -22,7 +22,7 @@ public class EmpleadoDTO {
         this.nombre = empleado.getNombre();
         this.apellidos = empleado.getApellidos();
         this.usuario = empleado.getUsuario();
-        this.cargo = empleado.getCargo().name();
+        this.cargo = empleado.getCargo();
         this.activo = empleado.getActivo();
     }
 
