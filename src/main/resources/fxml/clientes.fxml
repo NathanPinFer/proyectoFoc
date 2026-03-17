@@ -163,13 +163,13 @@
 
                     <TableView fx:id="clientesTable">
                         <columns>
-                            <TableColumn fx:id="nombreColumn" text="CLIENTE" prefWidth="250"/>
-                            <TableColumn fx:id="dniColumn" text="DNI" prefWidth="120"/>
-                            <TableColumn fx:id="telefonoColumn" text="TELÉFONO" prefWidth="150"/>
-                            <TableColumn fx:id="ciudadColumn" text="CIUDAD" prefWidth="130"/>
-                            <TableColumn fx:id="reservasColumn" text="RESERVAS" prefWidth="100"/>
-                            <TableColumn fx:id="estadoColumn" text="ESTADO" prefWidth="120"/>
-                            <TableColumn fx:id="accionesColumn" text="ACCIONES" prefWidth="180"/>
+                            <TableColumn fx:id="nombreColumn" text="CLIENTE" prefWidth="180"/>
+                            <TableColumn fx:id="dniColumn" text="DNI" prefWidth="140"/>
+                            <TableColumn fx:id="telefonoColumn" text="TELÉFONO" prefWidth="140"/>
+                            <TableColumn fx:id="ciudadColumn" text="CIUDAD" prefWidth="140"/>
+                            <TableColumn fx:id="reservasColumn" text="RESERVAS" prefWidth="140"/>
+                            <TableColumn fx:id="estadoColumn" text="ESTADO" prefWidth="140"/>
+                            <TableColumn fx:id="accionesColumn" text="ACCIONES" prefWidth="200"/>
                         </columns>
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>

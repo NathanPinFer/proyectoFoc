@@ -2,16 +2,10 @@
 /* SISTEMA DE GESTIÓN HOTELERA - CLIENTES */
 /* ============================================= */
 
-/* ============================================= */
-/* CONTENEDOR PRINCIPAL */
-/* ============================================= */
 .main-container {
     -fx-background-color: #F5F7FA;
 }
 
-/* ============================================= */
-/* SIDEBAR */
-/* ============================================= */
 .sidebar {
     -fx-background-color: linear-gradient(to bottom, #2C3E50 0%, #34495E 100%);
 }
@@ -60,16 +54,10 @@
     -fx-text-fill: inherit;
 }
 
-/* ============================================= */
-/* CONTENIDO PRINCIPAL */
-/* ============================================= */
 .main-content {
     -fx-background-color: #F5F7FA;
 }
 
-/* ============================================= */
-/* TOPBAR */
-/* ============================================= */
 .topbar {
     -fx-background-color: white;
     -fx-padding: 20 30 20 30;
@@ -83,9 +71,6 @@
     -fx-font-weight: bold;
 }
 
-/* ============================================= */
-/* BOTONES */
-/* ============================================= */
 .btn-primary {
     -fx-background-color: linear-gradient(to bottom right, #3498DB 0%, #2980B9 100%);
     -fx-text-fill: white;
@@ -130,9 +115,6 @@
     -fx-translate-y: -2px;
 }
 
-/* ============================================= */
-/* ESTADÍSTICAS */
-/* ============================================= */
 .stats-bar {
     -fx-hgap: 15px;
     -fx-vgap: 15px;
@@ -158,9 +140,6 @@
     -fx-font-weight: 500;
 }
 
-/* ============================================= */
-/* BARRA DE BÚSQUEDA */
-/* ============================================= */
 .search-bar {
     -fx-background-color: white;
     -fx-padding: 20 25 20 25;
@@ -195,7 +174,7 @@
 }
 
 /* ============================================= */
-/* TABLA */
+/* TABLA - PADDING IGUAL EN HEADERS Y CELDAS */
 /* ============================================= */
 .clientes-table-container {
     -fx-background-color: white;
@@ -224,20 +203,22 @@
     -fx-background-color: #F8F9FA;
 }
 
+/* ENCABEZADOS */
 .table-view .column-header {
     -fx-background-color: #F8F9FA;
     -fx-text-fill: #7F8C8D;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-padding: 15 20 15 20;
+    -fx-padding: 15 10 15 10;
 }
 
+/* CELDAS */
 .table-view .table-cell {
-    -fx-padding: 18 20 18 20;
     -fx-border-color: #ECF0F1;
     -fx-border-width: 0 0 1 0;
     -fx-text-fill: #2C3E50;
     -fx-font-size: 14px;
+    -fx-padding: 10 10 10 10;
 }
 
 .table-row-cell:hover {
@@ -245,12 +226,26 @@
 }
 
 .table-view .table-row-cell:selected {
-    -fx-background-color: rgba(52, 152, 219, 0.1);
+    -fx-background-color: rgba(52, 152, 219, 0.15);
 }
 
-/* ============================================= */
-/* PAGINACIÓN */
-/* ============================================= */
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: #2C3E50;
+}
+
+.table-view .table-row-cell:selected .table-cell Label {
+    -fx-text-fill: inherit;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:empty:hover {
+    -fx-background-color: transparent;
+}
+
 .pagination {
     -fx-alignment: center;
     -fx-spacing: 10px;
@@ -285,9 +280,6 @@
     -fx-cursor: default;
 }
 
-/* ============================================= */
-/* MODAL */
-/* ============================================= */
 .modal-content {
     -fx-background-color: white;
     -fx-background-radius: 20px;
@@ -322,9 +314,6 @@
     -fx-text-fill: #2C3E50;
 }
 
-/* ============================================= */
-/* FORMULARIO */
-/* ============================================= */
 .form-label {
     -fx-text-fill: #2C3E50;
     -fx-font-size: 14px;
@@ -358,9 +347,6 @@
     -fx-font-weight: bold;
 }
 
-/* ============================================= */
-/* DETALLES DEL CLIENTE */
-/* ============================================= */
 .detalle-label {
     -fx-text-fill: #7F8C8D;
     -fx-font-size: 14px;
@@ -372,9 +358,6 @@
     -fx-font-size: 14px;
 }
 
-/* ============================================= */
-/* MENSAJES DE ERROR */
-/* ============================================= */
 .error-label {
     -fx-text-fill: #E74C3C;
     -fx-font-size: 13px;
@@ -383,9 +366,6 @@
     -fx-background-radius: 8px;
 }
 
-/* ============================================= */
-/* SCROLLBAR */
-/* ============================================= */
 .scroll-pane {
     -fx-background-color: transparent;
 }
@@ -402,18 +382,4 @@
 .scroll-bar:vertical .track {
     -fx-background-color: #ECF0F1;
     -fx-background-radius: 5px;
-}
-
-/* ============================================= */
-/* OTROS AJUSTES */
-/* ============================================= */
-/* Quitar color y bordes a las filas sin datos */
-.table-row-cell:empty {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-
-/* Evitar que se pongan grises al pasar el ratón por las filas vacías */
-.table-row-cell:empty:hover {
-    -fx-background-color: transparent;
 }
