@@ -3,6 +3,7 @@ package com.proyectoFoc.controller;
 import com.proyectoFoc.FxmlView;
 import com.proyectoFoc.StageManager;
 import com.proyectoFoc.dto.ClienteDTO;
+import com.proyectoFoc.entity.Empleado;
 import com.proyectoFoc.service.AuthService;
 import com.proyectoFoc.service.ClienteService;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,49 +29,89 @@ import java.util.Optional;
 @Component
 public class ClienteController {
 
-    @FXML private Label totalClientesLabel;
-    @FXML private Label clientesVIPLabel;
-    @FXML private Label clientesRegularesLabel;
-    @FXML private Label clientesNuevosHoyLabel;
-    @FXML private TextField buscarField;
-    @FXML private TableView<ClienteDTO> clientesTable;
-    @FXML private TableColumn<ClienteDTO, String> nombreColumn;
-    @FXML private TableColumn<ClienteDTO, String> dniColumn;
-    @FXML private TableColumn<ClienteDTO, String> telefonoColumn;
-    @FXML private TableColumn<ClienteDTO, String> ciudadColumn;
-    @FXML private TableColumn<ClienteDTO, Integer> reservasColumn;
-    @FXML private TableColumn<ClienteDTO, String> estadoColumn;
-    @FXML private TableColumn<ClienteDTO, Void> accionesColumn;
-    @FXML private HBox paginacionContainer;
-    @FXML private VBox tableContainer;
+    @FXML
+    private Label totalClientesLabel;
+    @FXML
+    private Label clientesVIPLabel;
+    @FXML
+    private Label clientesRegularesLabel;
+    @FXML
+    private Label clientesNuevosHoyLabel;
+    @FXML
+    private TextField buscarField;
+    @FXML
+    private TableView<ClienteDTO> clientesTable;
+    @FXML
+    private TableColumn<ClienteDTO, String> nombreColumn;
+    @FXML
+    private TableColumn<ClienteDTO, String> dniColumn;
+    @FXML
+    private TableColumn<ClienteDTO, String> telefonoColumn;
+    @FXML
+    private TableColumn<ClienteDTO, String> ciudadColumn;
+    @FXML
+    private TableColumn<ClienteDTO, Integer> reservasColumn;
+    @FXML
+    private TableColumn<ClienteDTO, String> estadoColumn;
+    @FXML
+    private TableColumn<ClienteDTO, Void> accionesColumn;
+    @FXML
+    private HBox paginacionContainer;
+    @FXML
+    private VBox tableContainer;
     private int paginaActual = 0;
     private int elementosPorPagina = 10;
     private int totalPaginas = 0;
-    @FXML private StackPane modalFormContainer;
-    @FXML private Label modalFormTitle;
-    @FXML private TextField dniField;
-    @FXML private TextField nombreField;
-    @FXML private TextField apellidosField;
-    @FXML private TextField emailField;
-    @FXML private TextField telefonoField;
-    @FXML private TextField direccionField;
-    @FXML private TextField ciudadField;
-    @FXML private TextField codigoPostalField;
-    @FXML private ComboBox<String> paisCombo;
-    @FXML private CheckBox vipCheckBox;
-    @FXML private Label errorFormLabel;
-    @FXML private StackPane modalDetallesContainer;
-    @FXML private Label detallesNombreLabel;
-    @FXML private Label detallesDniLabel;
-    @FXML private Label detallesEmailLabel;
-    @FXML private Label detallesTelefonoLabel;
-    @FXML private Label detallesDireccionLabel;
-    @FXML private Label detallesCiudadLabel;
-    @FXML private Label detallesCodigoPostalLabel;
-    @FXML private Label detallesPaisLabel;
-    @FXML private Label detallesFechaRegistroLabel;
-    @FXML private Label detallesEstadoLabel;
-    @FXML private Label detallesReservasLabel;
+    @FXML
+    private StackPane modalFormContainer;
+    @FXML
+    private Label modalFormTitle;
+    @FXML
+    private TextField dniField;
+    @FXML
+    private TextField nombreField;
+    @FXML
+    private TextField apellidosField;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private TextField telefonoField;
+    @FXML
+    private TextField direccionField;
+    @FXML
+    private TextField ciudadField;
+    @FXML
+    private TextField codigoPostalField;
+    @FXML
+    private ComboBox<String> paisCombo;
+    @FXML
+    private CheckBox vipCheckBox;
+    @FXML
+    private Label errorFormLabel;
+    @FXML
+    private StackPane modalDetallesContainer;
+    @FXML
+    private Label detallesNombreLabel;
+    @FXML
+    private Label detallesDniLabel;
+    @FXML
+    private Label detallesEmailLabel;
+    @FXML
+    private Label detallesTelefonoLabel;
+    @FXML
+    private Label detallesDireccionLabel;
+    @FXML
+    private Label detallesCiudadLabel;
+    @FXML
+    private Label detallesCodigoPostalLabel;
+    @FXML
+    private Label detallesPaisLabel;
+    @FXML
+    private Label detallesFechaRegistroLabel;
+    @FXML
+    private Label detallesEstadoLabel;
+    @FXML
+    private Label detallesReservasLabel;
 
     @Autowired
     private ClienteService clienteService;
@@ -113,7 +154,7 @@ public class ClienteController {
 
     private void configurarTabla() {
         clientesTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        
+
         // Columna Nombre - CENTRADA
         nombreColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getNombreCompleto())
@@ -122,31 +163,31 @@ public class ClienteController {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
                     ClienteDTO cliente = getTableView().getItems().get(getIndex());
-                    
+
                     Label avatar = new Label(cliente.getIniciales());
                     avatar.setStyle(
-                        "-fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2);" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-pref-width: 40; -fx-pref-height: 40;" +
-                        "-fx-min-width: 40; -fx-min-height: 40;" +
-                        "-fx-max-width: 40; -fx-max-height: 40;" +
-                        "-fx-background-radius: 50%;" +
-                        "-fx-alignment: center;"
+                            "-fx-background-color: linear-gradient(to bottom right, #667eea, #764ba2);" +
+                                    "-fx-text-fill: white;" +
+                                    "-fx-font-weight: bold;" +
+                                    "-fx-pref-width: 40; -fx-pref-height: 40;" +
+                                    "-fx-min-width: 40; -fx-min-height: 40;" +
+                                    "-fx-max-width: 40; -fx-max-height: 40;" +
+                                    "-fx-background-radius: 50%;" +
+                                    "-fx-alignment: center;"
                     );
-                    
+
                     VBox infoBox = new VBox(2);
                     Label nombreLabel = new Label(item);
                     nombreLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
                     Label emailLabel = new Label(cliente.getEmail());
                     emailLabel.setStyle("-fx-text-fill: #7F8C8D; -fx-font-size: 12px;");
                     infoBox.getChildren().addAll(nombreLabel, emailLabel);
-                    
+
                     HBox hbox = new HBox(10, avatar, infoBox);
                     hbox.setAlignment(Pos.CENTER_LEFT);
 
@@ -163,13 +204,13 @@ public class ClienteController {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
                     Label label = new Label(item);
                     label.setStyle("-fx-font-size: 14px;");
-                    
+
                     HBox container = new HBox(label);
                     container.setAlignment(Pos.CENTER);  // CENTRADO
                     setGraphic(container);
@@ -183,13 +224,13 @@ public class ClienteController {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
                     Label label = new Label(item);
                     label.setStyle("-fx-font-size: 14px;");
-                    
+
                     HBox container = new HBox(label);
                     container.setAlignment(Pos.CENTER);  // CENTRADO
                     setGraphic(container);
@@ -203,13 +244,13 @@ public class ClienteController {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
                     Label label = new Label(item);
                     label.setStyle("-fx-font-size: 14px;");
-                    
+
                     HBox container = new HBox(label);
                     container.setAlignment(Pos.CENTER);  // CENTRADO
                     setGraphic(container);
@@ -223,13 +264,13 @@ public class ClienteController {
             @Override
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
-                
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
                     Label label = new Label(String.valueOf(item));
                     label.setStyle("-fx-font-size: 14px;");
-                    
+
                     HBox container = new HBox(label);
                     container.setAlignment(Pos.CENTER);  // CENTRADO
                     setGraphic(container);
@@ -245,28 +286,28 @@ public class ClienteController {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                
+
                 if (empty || item == null) {
                     setGraphic(null);
                 } else {
                     Label badge = new Label(item);
                     if (item.contains("VIP")) {
                         badge.setStyle(
-                            "-fx-background-color: linear-gradient(to bottom right, #F39C12, #E67E22);" +
-                            "-fx-text-fill: white;" +
-                            "-fx-padding: 5 12 5 12;" +
-                            "-fx-background-radius: 20;" +
-                            "-fx-font-size: 11px;" +
-                            "-fx-font-weight: bold;"
+                                "-fx-background-color: linear-gradient(to bottom right, #F39C12, #E67E22);" +
+                                        "-fx-text-fill: white;" +
+                                        "-fx-padding: 5 12 5 12;" +
+                                        "-fx-background-radius: 20;" +
+                                        "-fx-font-size: 11px;" +
+                                        "-fx-font-weight: bold;"
                         );
                     } else {
                         badge.setStyle(
-                            "-fx-background-color: #ECF0F1;" +
-                            "-fx-text-fill: #7F8C8D;" +
-                            "-fx-padding: 5 12 5 12;" +
-                            "-fx-background-radius: 20;" +
-                            "-fx-font-size: 11px;" +
-                            "-fx-font-weight: bold;"
+                                "-fx-background-color: #ECF0F1;" +
+                                        "-fx-text-fill: #7F8C8D;" +
+                                        "-fx-padding: 5 12 5 12;" +
+                                        "-fx-background-radius: 20;" +
+                                        "-fx-font-size: 11px;" +
+                                        "-fx-font-weight: bold;"
                         );
                     }
                     HBox container = new HBox(badge);
@@ -302,7 +343,7 @@ public class ClienteController {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                
+
                 if (empty) {
                     setGraphic(null);
                 } else {
@@ -321,13 +362,13 @@ public class ClienteController {
     private Button crearBotonAccion(String texto, String color) {
         Button btn = new Button(texto);
         btn.setStyle(
-            "-fx-background-color: " + color + ";" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 8;" +
-            "-fx-cursor: hand;" +
-            "-fx-pref-width: 45; -fx-pref-height: 35;" +
-            "-fx-font-size: 10px;" +
-            "-fx-font-weight: bold;"
+                "-fx-background-color: " + color + ";" +
+                        "-fx-text-fill: white;" +
+                        "-fx-background-radius: 8;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-pref-width: 45; -fx-pref-height: 35;" +
+                        "-fx-font-size: 10px;" +
+                        "-fx-font-weight: bold;"
         );
         btn.setOnMouseEntered(e -> {
             btn.setScaleX(1.1);
@@ -347,13 +388,13 @@ public class ClienteController {
     private void cargarClientesPaginados(int pagina) {
         String filtro = buscarField != null ? buscarField.getText().trim() : "";
         Page<ClienteDTO> paginaClientes = clienteService.buscarClientesPaginados(filtro, pagina, elementosPorPagina);
-        
+
         clientesData.clear();
         clientesData.addAll(paginaClientes.getContent());
-        
+
         totalPaginas = paginaClientes.getTotalPages();
         paginaActual = pagina;
-        
+
         ajustarAlturaTabla();
         actualizarBotonesPaginacion();
     }
@@ -361,38 +402,38 @@ public class ClienteController {
     private void ajustarAlturaTabla() {
         int numFilas = clientesData.size();
         if (numFilas == 0) numFilas = 1;
-        
+
         double alturaCalculada = 40 + (numFilas * 60) + 10;
         double alturaMaxima = 700;
         double alturaFinal = Math.min(alturaCalculada, alturaMaxima);
-        
+
         clientesTable.setPrefHeight(alturaFinal);
         clientesTable.setMaxHeight(alturaFinal);
     }
 
     private void actualizarBotonesPaginacion() {
         if (paginacionContainer == null) return;
-        
+
         paginacionContainer.getChildren().clear();
-        
+
         if (totalPaginas <= 1) {
             paginacionContainer.setVisible(false);
             paginacionContainer.setManaged(false);
             return;
         }
-        
+
         paginacionContainer.setVisible(true);
         paginacionContainer.setManaged(true);
-        
+
         Button btnAnterior = new Button("◀");
         btnAnterior.setDisable(paginaActual == 0);
         btnAnterior.setOnAction(e -> cargarClientesPaginados(paginaActual - 1));
         btnAnterior.getStyleClass().add("page-btn");
         paginacionContainer.getChildren().add(btnAnterior);
-        
+
         int inicio = Math.max(0, paginaActual - 2);
         int fin = Math.min(totalPaginas, paginaActual + 3);
-        
+
         for (int i = inicio; i < fin; i++) {
             final int pagina = i;
             Button btnPagina = new Button(String.valueOf(i + 1));
@@ -403,7 +444,7 @@ public class ClienteController {
             btnPagina.setOnAction(e -> cargarClientesPaginados(pagina));
             paginacionContainer.getChildren().add(btnPagina);
         }
-        
+
         Button btnSiguiente = new Button("▶");
         btnSiguiente.setDisable(paginaActual >= totalPaginas - 1);
         btnSiguiente.setOnAction(e -> cargarClientesPaginados(paginaActual + 1));
@@ -448,21 +489,25 @@ public class ClienteController {
 
     private void abrirModalDetalles(ClienteDTO cliente) {
         if (modalDetallesContainer == null) return;
-        
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        
+
         if (detallesNombreLabel != null) detallesNombreLabel.setText(cliente.getNombreCompleto());
         if (detallesDniLabel != null) detallesDniLabel.setText(cliente.getDni());
         if (detallesEmailLabel != null) detallesEmailLabel.setText(cliente.getEmail());
         if (detallesTelefonoLabel != null) detallesTelefonoLabel.setText(cliente.getTelefono());
-        if (detallesDireccionLabel != null) detallesDireccionLabel.setText(cliente.getDireccion() != null ? cliente.getDireccion() : "No especificada");
-        if (detallesCiudadLabel != null) detallesCiudadLabel.setText(cliente.getCiudad() != null ? cliente.getCiudad() : "-");
-        if (detallesCodigoPostalLabel != null) detallesCodigoPostalLabel.setText(cliente.getCodigoPostal() != null ? cliente.getCodigoPostal() : "-");
+        if (detallesDireccionLabel != null)
+            detallesDireccionLabel.setText(cliente.getDireccion() != null ? cliente.getDireccion() : "No especificada");
+        if (detallesCiudadLabel != null)
+            detallesCiudadLabel.setText(cliente.getCiudad() != null ? cliente.getCiudad() : "-");
+        if (detallesCodigoPostalLabel != null)
+            detallesCodigoPostalLabel.setText(cliente.getCodigoPostal() != null ? cliente.getCodigoPostal() : "-");
         if (detallesPaisLabel != null) detallesPaisLabel.setText(cliente.getPais() != null ? cliente.getPais() : "-");
-        if (detallesFechaRegistroLabel != null) detallesFechaRegistroLabel.setText(cliente.getFechaRegistro() != null ? cliente.getFechaRegistro().format(formatter) : "-");
+        if (detallesFechaRegistroLabel != null)
+            detallesFechaRegistroLabel.setText(cliente.getFechaRegistro() != null ? cliente.getFechaRegistro().format(formatter) : "-");
         if (detallesEstadoLabel != null) detallesEstadoLabel.setText(cliente.getVip() ? "VIP" : "Regular");
         if (detallesReservasLabel != null) detallesReservasLabel.setText(String.valueOf(cliente.getNumeroReservas()));
-        
+
         mostrarModal(modalDetallesContainer);
     }
 

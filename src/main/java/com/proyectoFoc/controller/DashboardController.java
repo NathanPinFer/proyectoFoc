@@ -30,6 +30,8 @@ import java.util.Locale;
 @Component
 public class DashboardController {
 
+    @FXML
+    private Button btnEmpleados;
     @FXML private GridPane gridCalendario;
     @FXML private Label lblMesAnio;
     @FXML private VBox panelDetalle;
@@ -71,6 +73,7 @@ public class DashboardController {
     public void initialize() {
         mesActual = YearMonth.now();
         cargarCalendario();
+        ocultarMenuSegunCargo();
     }
 
     @FXML
@@ -460,5 +463,13 @@ public class DashboardController {
         });
 
         dialog.show();
+    }
+
+    private void ocultarMenuSegunCargo() {
+        // Si no es Gerente, ocultar botón
+        if (!authService.isGerente()) {
+            btnEmpleados.setVisible(false);
+            btnEmpleados.setManaged(false); // No ocupa espacio
+        }
     }
 }

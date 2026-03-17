@@ -70,4 +70,5 @@ public class AuthService {
     public boolean isGerente() {
         return usuarioActual != null && usuarioActual.isGerente();
     }
+
 }
