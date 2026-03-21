@@ -109,22 +109,32 @@
 
                 <HBox spacing="25" alignment="CENTER_LEFT">
                     <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Pane style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #27ae60;"/>
-                        <Label text="Check-in hoy" style="-fx-font-size: 13px;"/>
+                        <Pane
+                            style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #27ae60;" />
+                        <Label text="Check-in hoy" style="-fx-font-size: 13px;" />
                     </HBox>
                     <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Pane style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #2980b9;"/>
-                        <Label text="En curso" style="-fx-font-size: 13px;"/>
+                        <Pane
+                            style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #2980b9;" />
+                        <Label text="En curso" style="-fx-font-size: 13px;" />
                     </HBox>
                     <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Pane style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #e67e22;"/>
-                        <Label text="Check-out hoy" style="-fx-font-size: 13px;"/>
+                        <Pane
+                            style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #e67e22;" />
+                        <Label text="Check-out hoy" style="-fx-font-size: 13px;" />
                     </HBox>
                     <HBox spacing="8" alignment="CENTER_LEFT">
-                        <Pane style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #8e44ad;"/>
-                        <Label text="Reserva futura" style="-fx-font-size: 13px;"/>
+                        <Pane
+                            style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #8e44ad;" />
+                        <Label text="Reserva futura" style="-fx-font-size: 13px;" />
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Pane
+                            style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #95a5a6;" />
+                        <Label text="Finalizada" style="-fx-font-size: 13px;" />
                     </HBox>
                 </HBox>
+
 
                 <HBox spacing="20" VBox.vgrow="ALWAYS">
                     <ScrollPane fitToWidth="false" 

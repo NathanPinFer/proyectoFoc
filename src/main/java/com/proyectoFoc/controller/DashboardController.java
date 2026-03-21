@@ -149,17 +149,19 @@ public class DashboardController {
 
             VBox celdaDia = new VBox();
             celdaDia.setAlignment(Pos.CENTER);
-            celdaDia.setStyle("-fx-background-color: " + (esHoy ? "#E8F4F8" : "#F8F9FA") + 
-                            "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
+            celdaDia.setStyle("-fx-background-color: " + (esHoy ? "#2980b9" : "#F8F9FA") + 
+                "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
             celdaDia.setMinSize(COL_DIA, ROW_HEADER);
 
             Label lblDia = new Label(String.valueOf(d));
-            lblDia.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
+            lblDia.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: " + (esHoy ? "white" : "#2C3E50") + ";");
+
 
             String diaSemana = fecha.getDayOfWeek()
                     .getDisplayName(TextStyle.SHORT, new Locale("es", "ES"));
             Label lblDiaSem = new Label(diaSemana.substring(0, 1).toUpperCase());
-            lblDiaSem.setStyle("-fx-font-weight: normal; -fx-font-size: 9px; -fx-text-fill: #2C3E50;");
+            lblDiaSem.setStyle("-fx-font-weight: normal; -fx-font-size: 9px; -fx-text-fill: " + (esHoy ? "white" : "#2C3E50") + ";");
+
 
             celdaDia.getChildren().addAll(lblDia, lblDiaSem);
             gridCalendario.add(celdaDia, d, 0);
@@ -245,6 +247,7 @@ public class DashboardController {
             case "CHECKIN_HOY" -> "#27ae60";
             case "EN_CURSO" -> "#2980b9";
             case "CHECKOUT_HOY" -> "#e67e22";
+            case "FINALIZADA" -> "#95a5a6";
             default -> "#8e44ad";
         };
         bloque.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 4; -fx-cursor: hand;");
@@ -278,12 +281,14 @@ public class DashboardController {
             case "CHECKIN_HOY" -> "CHECK-IN HOY";
             case "CHECKOUT_HOY" -> "CHECK-OUT HOY";
             case "EN_CURSO" -> "EN CURSO";
+            case "FINALIZADA" -> "FINALIZADA";
             default -> "RESERVA FUTURA";
         };
         String estadoColor = switch (reserva.getEstadoBloque()) {
             case "CHECKIN_HOY" -> "#27ae60";
             case "CHECKOUT_HOY" -> "#e67e22";
             case "EN_CURSO" -> "#2980b9";
+            case "FINALIZADA" -> "#95a5a6";
             default -> "#8e44ad";
         };
         lblDetalleEstado.setText(estadoTexto);

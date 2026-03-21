@@ -63,6 +63,8 @@ public class ReservaCalendarioDTO {
             this.estadoBloque = "CHECKOUT_HOY";
         } else if (fechaEntrada.isBefore(hoy) && fechaSalida.isAfter(hoy)) {
             this.estadoBloque = "EN_CURSO";
+        } else if (fechaSalida.isBefore(hoy)) {
+            this.estadoBloque = "FINALIZADA";
         } else {
             this.estadoBloque = "FUTURO";
         }
