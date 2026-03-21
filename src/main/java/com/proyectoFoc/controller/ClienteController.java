@@ -155,7 +155,7 @@ public class ClienteController {
     private void configurarTabla() {
         clientesTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        // Columna Nombre - CENTRADA
+        // Columna Nombre
         nombreColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getNombreCompleto())
         );
@@ -198,7 +198,7 @@ public class ClienteController {
             }
         });
 
-        // Columna DNI - CENTRADA
+        // Columna DNI
         dniColumn.setCellValueFactory(new PropertyValueFactory<>("dni"));
         dniColumn.setCellFactory(column -> new TableCell<ClienteDTO, String>() {
             @Override
@@ -218,7 +218,7 @@ public class ClienteController {
             }
         });
 
-        // Columna Teléfono - CENTRADA
+        // Columna Teléfono
         telefonoColumn.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         telefonoColumn.setCellFactory(column -> new TableCell<ClienteDTO, String>() {
             @Override
@@ -238,7 +238,7 @@ public class ClienteController {
             }
         });
 
-        // Columna Ciudad - CENTRADA
+        // Columna Ciudad
         ciudadColumn.setCellValueFactory(new PropertyValueFactory<>("ciudad"));
         ciudadColumn.setCellFactory(column -> new TableCell<ClienteDTO, String>() {
             @Override
@@ -258,7 +258,7 @@ public class ClienteController {
             }
         });
 
-        // Columna Reservas - CENTRADA
+        // Columna Reservas
         reservasColumn.setCellValueFactory(new PropertyValueFactory<>("numeroReservas"));
         reservasColumn.setCellFactory(column -> new TableCell<ClienteDTO, Integer>() {
             @Override

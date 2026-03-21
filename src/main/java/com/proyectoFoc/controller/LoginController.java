@@ -50,7 +50,7 @@ public class LoginController {
 
         if (empleado != null) {
             // Login exitoso
-            System.out.println("✅ Login exitoso: " + empleado.getNombre() + " - " + empleado.getCargo());
+            System.out.println("Login con exito: " + empleado.getNombre() + " - " + empleado.getCargo());
 
             // Cambiar a vista Dashboard
             stageManager.switchScene(FxmlView.DASHBOARD);
