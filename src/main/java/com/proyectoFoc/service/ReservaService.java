@@ -125,4 +125,12 @@ public class ReservaService {
     public Long contarReservasCliente(Integer idCliente) {
         return reservaRepository.countByClienteIdCliente(idCliente);
     }
+
+    @Transactional
+    public void actualizarEstado(Integer idReserva, String estado) {
+        Reserva reserva = reservaRepository.findById(idReserva)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        reserva.setEstadoReserva(estado);
+        reservaRepository.save(reserva);
+    }
 }

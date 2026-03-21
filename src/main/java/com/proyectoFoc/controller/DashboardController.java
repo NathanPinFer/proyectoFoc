@@ -306,6 +306,7 @@ public class DashboardController {
             case "EN_CURSO" -> "#2980b9";
             case "CHECKOUT_HOY" -> "#e67e22";
             case "FINALIZADA" -> "#95a5a6";
+            case "NO_SHOW" -> "#e74c3c";
             default -> "#8e44ad";
         };
         bloque.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 4; -fx-cursor: hand;");
@@ -327,7 +328,35 @@ public class DashboardController {
         textos.getChildren().addAll(lblNombre, lblPrecio);
         bloque.getChildren().add(textos);
 
-        bloque.setOnMouseClicked(e -> abrirDetalle(reserva));
+        bloque.setOnMouseClicked(e -> {
+            if (e.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+                abrirDetalle(reserva);
+            }
+        });
+
+        ContextMenu menu = new ContextMenu();
+
+        MenuItem itemCheckin = new MenuItem("✅ Marcar Check-in");
+        itemCheckin.setOnAction(e -> {
+            reservaService.actualizarEstado(reserva.getIdReserva(), "Confirmada");
+            cargarCalendario();
+        });
+
+        MenuItem itemCheckout = new MenuItem("🏁 Marcar Check-out");
+        itemCheckout.setOnAction(e -> {
+            reservaService.actualizarEstado(reserva.getIdReserva(), "Completada");
+            cargarCalendario();
+        });
+
+        MenuItem itemNoShow = new MenuItem("❌ No-show");
+        itemNoShow.setOnAction(e -> {
+            reservaService.actualizarEstado(reserva.getIdReserva(), "No_presentado");
+            cargarCalendario();
+        });
+
+        menu.getItems().addAll(itemCheckin, itemCheckout, itemNoShow);
+
+        bloque.setOnContextMenuRequested(e -> menu.show(bloque, e.getScreenX(), e.getScreenY()));
 
         return bloque;
     }
@@ -340,6 +369,7 @@ public class DashboardController {
             case "CHECKOUT_HOY" -> "CHECK-OUT HOY";
             case "EN_CURSO" -> "EN CURSO";
             case "FINALIZADA" -> "FINALIZADA";
+            case "NO_SHOW" -> "NO-SHOW";
             default -> "RESERVA FUTURA";
         };
         String estadoColor = switch (reserva.getEstadoBloque()) {
@@ -347,6 +377,7 @@ public class DashboardController {
             case "CHECKOUT_HOY" -> "#e67e22";
             case "EN_CURSO" -> "#2980b9";
             case "FINALIZADA" -> "#95a5a6";
+            case "NO_SHOW" -> "#e74c3c";
             default -> "#8e44ad";
         };
         lblDetalleEstado.setText(estadoTexto);

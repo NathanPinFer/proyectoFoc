@@ -139,6 +139,11 @@
                             style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #95a5a6;" />
                         <Label text="Finalizada" style="-fx-font-size: 13px;" />
                     </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Pane
+                            style="-fx-min-width: 20px; -fx-min-height: 20px; -fx-background-radius: 4; -fx-background-color: #e74c3c;" />
+                        <Label text="No-show" style="-fx-font-size: 13px;" />
+                    </HBox>
                 </HBox>
 
 

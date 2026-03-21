@@ -23,7 +23,8 @@ public class ReservaCalendarioDTO {
     private BigDecimal precioNoche;
     private BigDecimal subtotal;
     
-    private String estadoBloque; // CHECKIN_HOY, EN_CURSO, CHECKOUT_HOY, FUTURO
+    private String estadoBloque;
+    private String estadoReserva;
     
     // Constructor completo
     public ReservaCalendarioDTO(
@@ -39,8 +40,9 @@ public class ReservaCalendarioDTO {
             LocalDate fechaEntrada,
             LocalDate fechaSalida,
             BigDecimal precioNoche,
-            BigDecimal subtotal) {
-        
+            BigDecimal subtotal,
+            String estadoReserva) {
+
         this.idReserva = idReserva;
         this.idHabitacion = idHabitacion;
         this.numeroHabitacion = numeroHabitacion;
@@ -54,10 +56,14 @@ public class ReservaCalendarioDTO {
         this.fechaSalida = fechaSalida;
         this.precioNoche = precioNoche;
         this.subtotal = subtotal;
-        
-        // Calcular estado del bloque
+        this.estadoReserva = estadoReserva;
+
         LocalDate hoy = LocalDate.now();
-        if (fechaEntrada.equals(hoy)) {
+        if ("No_presentado".equals(estadoReserva)) {
+            this.estadoBloque = "NO_SHOW";
+        } else if ("Completada".equals(estadoReserva)) {
+            this.estadoBloque = "FINALIZADA";
+        } else if (fechaEntrada.equals(hoy)) {
             this.estadoBloque = "CHECKIN_HOY";
         } else if (fechaSalida.equals(hoy)) {
             this.estadoBloque = "CHECKOUT_HOY";
@@ -69,8 +75,7 @@ public class ReservaCalendarioDTO {
             this.estadoBloque = "FUTURO";
         }
     }
-    
-    // Constructor vacío
-    public ReservaCalendarioDTO() {
-    }
+
+    // Constructor vacío requerido por JPA/Spring
+    public ReservaCalendarioDTO() {}
 }
