@@ -32,20 +32,45 @@ public class DashboardController {
 
     @FXML
     private Button btnEmpleados;
-    @FXML private GridPane gridCalendario;
-    @FXML private Label lblMesAnio;
-    @FXML private VBox panelDetalle;
-    @FXML private Label lblDetalleTitulo;
-    @FXML private Label lblDetalleEstado;
-    @FXML private Label lblDetalleHabitacion;
-    @FXML private Label lblDetalleTipoHab;
-    @FXML private Label lblDetalleCliente;
-    @FXML private Label lblDetalleVip;
-    @FXML private Label lblDetalleFechaEntrada;
-    @FXML private Label lblDetalleFechaSalida;
-    @FXML private Label lblDetalleNoches;
-    @FXML private Label lblDetallePrecioNoche;
-    @FXML private Label lblDetalleSubtotal;
+    @FXML
+    private Label lblMesAnio;
+    @FXML
+    private VBox panelDetalle;
+    @FXML
+    private Label lblDetalleTitulo;
+    @FXML
+    private Label lblDetalleEstado;
+    @FXML
+    private Label lblDetalleHabitacion;
+    @FXML
+    private Label lblDetalleTipoHab;
+    @FXML
+    private Label lblDetalleCliente;
+    @FXML
+    private Label lblDetalleVip;
+    @FXML
+    private Label lblDetalleFechaEntrada;
+    @FXML
+    private Label lblDetalleFechaSalida;
+    @FXML
+    private Label lblDetalleNoches;
+    @FXML
+    private Label lblDetallePrecioNoche;
+    @FXML
+    private Label lblDetalleSubtotal;
+
+    @FXML
+    private GridPane gridDias;
+    @FXML
+    private GridPane gridHabitaciones;
+    @FXML
+    private GridPane gridCeldas;
+    @FXML
+    private ScrollPane scrollDias;
+    @FXML
+    private ScrollPane scrollHabs;
+    @FXML
+    private ScrollPane scrollCeldas;
 
     @Autowired
     private StageManager stageManager;
@@ -63,7 +88,7 @@ public class DashboardController {
     private ClienteService clienteService;
 
     private YearMonth mesActual;
-    
+
     private static final int COL_HABITACION = 130;
     private static final int COL_DIA = 38;
     private static final int ROW_HEADER = 36;
@@ -74,6 +99,17 @@ public class DashboardController {
         mesActual = YearMonth.now();
         cargarCalendario();
         ocultarMenuSegunCargo();
+        sincronizarScrolls();
+    }
+
+    private void sincronizarScrolls() {
+        // Scroll horizontal: sincronizar scrollDias con scrollCeldas
+        scrollCeldas.hvalueProperty().addListener((obs, oldVal, newVal) -> scrollDias.setHvalue(newVal.doubleValue()));
+        scrollDias.hvalueProperty().addListener((obs, oldVal, newVal) -> scrollCeldas.setHvalue(newVal.doubleValue()));
+
+        // Scroll vertical: sincronizar scrollHabs con scrollCeldas
+        scrollCeldas.vvalueProperty().addListener((obs, oldVal, newVal) -> scrollHabs.setVvalue(newVal.doubleValue()));
+        scrollHabs.vvalueProperty().addListener((obs, oldVal, newVal) -> scrollCeldas.setVvalue(newVal.doubleValue()));
     }
 
     @FXML
@@ -117,31 +153,30 @@ public class DashboardController {
             List<ReservaCalendarioDTO> reservas,
             int mes, int anio) {
 
-        gridCalendario.getChildren().clear();
-        gridCalendario.getColumnConstraints().clear();
-        gridCalendario.getRowConstraints().clear();
+        gridDias.getChildren().clear();
+        gridDias.getColumnConstraints().clear();
+        gridDias.getRowConstraints().clear();
+
+        gridHabitaciones.getChildren().clear();
+        gridHabitaciones.getColumnConstraints().clear();
+        gridHabitaciones.getRowConstraints().clear();
+
+        gridCeldas.getChildren().clear();
+        gridCeldas.getColumnConstraints().clear();
+        gridCeldas.getRowConstraints().clear();
 
         YearMonth ym = YearMonth.of(anio, mes);
         int diasEnMes = ym.lengthOfMonth();
         LocalDate hoy = LocalDate.now();
 
-        ColumnConstraints ccHab = new ColumnConstraints(COL_HABITACION);
-        ccHab.setHgrow(Priority.NEVER);
-        gridCalendario.getColumnConstraints().add(ccHab);
-
+        // --- GRID DÍAS (cabecera horizontal) ---
         for (int d = 1; d <= diasEnMes; d++) {
             ColumnConstraints cc = new ColumnConstraints(COL_DIA);
             cc.setHgrow(Priority.NEVER);
-            gridCalendario.getColumnConstraints().add(cc);
+            gridDias.getColumnConstraints().add(cc);
         }
-
-        RowConstraints rcHeader = new RowConstraints(ROW_HEADER);
-        gridCalendario.getRowConstraints().add(rcHeader);
-
-        Pane esquina = new Pane();
-        esquina.setStyle("-fx-background-color: #34495E; -fx-border-color: #2C3E50; -fx-border-width: 0 1 1 0;");
-        esquina.setMinSize(COL_HABITACION, ROW_HEADER);
-        gridCalendario.add(esquina, 0, 0);
+        RowConstraints rcDias = new RowConstraints(ROW_HEADER);
+        gridDias.getRowConstraints().add(rcDias);
 
         for (int d = 1; d <= diasEnMes; d++) {
             LocalDate fecha = LocalDate.of(anio, mes, d);
@@ -149,30 +184,34 @@ public class DashboardController {
 
             VBox celdaDia = new VBox();
             celdaDia.setAlignment(Pos.CENTER);
-            celdaDia.setStyle("-fx-background-color: " + (esHoy ? "#2980b9" : "#F8F9FA") + 
-                "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
+            celdaDia.setStyle("-fx-background-color: " + (esHoy ? "#2980b9" : "#F8F9FA") +
+                    "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
             celdaDia.setMinSize(COL_DIA, ROW_HEADER);
 
             Label lblDia = new Label(String.valueOf(d));
-            lblDia.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: " + (esHoy ? "white" : "#2C3E50") + ";");
-
+            lblDia.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: "
+                    + (esHoy ? "white" : "#2C3E50") + ";");
 
             String diaSemana = fecha.getDayOfWeek()
                     .getDisplayName(TextStyle.SHORT, new Locale("es", "ES"));
             Label lblDiaSem = new Label(diaSemana.substring(0, 1).toUpperCase());
-            lblDiaSem.setStyle("-fx-font-weight: normal; -fx-font-size: 9px; -fx-text-fill: " + (esHoy ? "white" : "#2C3E50") + ";");
-
+            lblDiaSem.setStyle("-fx-font-weight: normal; -fx-font-size: 9px; -fx-text-fill: "
+                    + (esHoy ? "white" : "#2C3E50") + ";");
 
             celdaDia.getChildren().addAll(lblDia, lblDiaSem);
-            gridCalendario.add(celdaDia, d, 0);
+            gridDias.add(celdaDia, d - 1, 0);
         }
+
+        // --- GRID HABITACIONES (columna izquierda fija) ---
+        ColumnConstraints ccHab = new ColumnConstraints(COL_HABITACION);
+        ccHab.setHgrow(Priority.NEVER);
+        gridHabitaciones.getColumnConstraints().add(ccHab);
 
         for (int i = 0; i < habitaciones.size(); i++) {
             Habitacion hab = habitaciones.get(i);
-            int fila = i + 1;
 
             RowConstraints rc = new RowConstraints(ROW_HAB);
-            gridCalendario.getRowConstraints().add(rc);
+            gridHabitaciones.getRowConstraints().add(rc);
 
             VBox celdaHab = new VBox(2);
             celdaHab.setAlignment(Pos.CENTER_LEFT);
@@ -187,7 +226,21 @@ public class DashboardController {
             lblTipo.setStyle("-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 10px;");
 
             celdaHab.getChildren().addAll(lblNum, lblTipo);
-            gridCalendario.add(celdaHab, 0, fila);
+            gridHabitaciones.add(celdaHab, 0, i);
+        }
+
+        // --- GRID CELDAS (área central con reservas) ---
+        for (int d = 1; d <= diasEnMes; d++) {
+            ColumnConstraints cc = new ColumnConstraints(COL_DIA);
+            cc.setHgrow(Priority.NEVER);
+            gridCeldas.getColumnConstraints().add(cc);
+        }
+
+        for (int i = 0; i < habitaciones.size(); i++) {
+            Habitacion hab = habitaciones.get(i);
+
+            RowConstraints rc = new RowConstraints(ROW_HAB);
+            gridCeldas.getRowConstraints().add(rc);
 
             for (int d = 1; d <= diasEnMes; d++) {
                 LocalDate fecha = LocalDate.of(anio, mes, d);
@@ -196,42 +249,47 @@ public class DashboardController {
 
                 Pane celdaVacia = new Pane();
                 celdaVacia.setStyle("-fx-background-color: " + (esFinSemana ? "#FAFAFA" : "white") +
-                                  "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
+                        "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
                 celdaVacia.setMinSize(COL_DIA, ROW_HAB);
-                
+
                 final LocalDate fechaCelda = fecha;
                 final Habitacion habCelda = hab;
                 celdaVacia.setOnMouseClicked(e -> abrirFormularioReserva(habCelda, fechaCelda));
                 celdaVacia.setStyle(celdaVacia.getStyle() + " -fx-cursor: hand;");
-                
-                gridCalendario.add(celdaVacia, d, fila);
+
+                gridCeldas.add(celdaVacia, d - 1, i);
             }
         }
+
+        // --- BLOQUES DE RESERVAS ---
+        LocalDate inicioMes = LocalDate.of(anio, mes, 1);
+        LocalDate finMes = LocalDate.of(anio, mes, diasEnMes);
 
         for (ReservaCalendarioDTO reserva : reservas) {
             int filaHab = -1;
             for (int i = 0; i < habitaciones.size(); i++) {
                 if (habitaciones.get(i).getIdHabitacion().equals(reserva.getIdHabitacion())) {
-                    filaHab = i + 1;
+                    filaHab = i;
                     break;
                 }
             }
-            if (filaHab == -1) continue;
-
-            LocalDate inicioMes = LocalDate.of(anio, mes, 1);
-            LocalDate finMes = LocalDate.of(anio, mes, diasEnMes);
+            if (filaHab == -1)
+                continue;
 
             LocalDate bloqueInicio = reserva.getFechaEntrada().isBefore(inicioMes)
-                    ? inicioMes : reserva.getFechaEntrada();
+                    ? inicioMes
+                    : reserva.getFechaEntrada();
             LocalDate bloqueFin = reserva.getFechaSalida().isAfter(finMes)
-                    ? finMes : reserva.getFechaSalida();
+                    ? finMes
+                    : reserva.getFechaSalida();
 
-            int colInicio = bloqueInicio.getDayOfMonth();
+            int colInicio = bloqueInicio.getDayOfMonth() - 1;
             int span = (int) (bloqueFin.toEpochDay() - bloqueInicio.toEpochDay());
-            if (span < 1) span = 1;
+            if (span < 1)
+                span = 1;
 
             HBox bloque = crearBloqueReserva(reserva, span);
-            gridCalendario.add(bloque, colInicio, filaHab);
+            gridCeldas.add(bloque, colInicio, filaHab);
             GridPane.setColumnSpan(bloque, span);
         }
     }
@@ -378,7 +436,7 @@ public class DashboardController {
         listaClientes.setPrefHeight(100);
         listaClientes.setVisible(false);
 
-        final ClienteDTO[] clienteSeleccionado = {null};
+        final ClienteDTO[] clienteSeleccionado = { null };
         Label lblClienteSeleccionado = new Label("(ningún cliente seleccionado)");
         lblClienteSeleccionado.setStyle("-fx-text-fill: #95a5a6; -fx-font-style: italic;");
 
@@ -428,8 +486,7 @@ public class DashboardController {
                 lblSecCliente,
                 txtBuscarCliente,
                 listaClientes,
-                lblClienteSeleccionado
-        );
+                lblClienteSeleccionado);
 
         dialog.getDialogPane().setContent(contenido);
 
