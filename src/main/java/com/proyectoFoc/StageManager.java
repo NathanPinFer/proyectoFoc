@@ -37,20 +37,14 @@ public class StageManager {
         primaryStage.setScene(scene);
         primaryStage.setTitle(view.getTitle());
 
-        // Solo configurar tamaño la primera vez
-        if (!inicializado) {
-            if (view == FxmlView.LOGIN) {
-                primaryStage.setWidth(1200);
-                primaryStage.setHeight(750);
-            } else {
-                primaryStage.setMaximized(true);
-            }
-            inicializado = true;
-        } else if (view == FxmlView.LOGIN) {
-            // Al volver al login (cerrar sesión), resetear tamaño
-            primaryStage.setMaximized(false);
+        // Configurar tamaño de ventana según la vista
+        if (view == FxmlView.LOGIN) {
             primaryStage.setWidth(1200);
             primaryStage.setHeight(750);
+        } else {
+            primaryStage.setWidth(1700);
+            primaryStage.setHeight(1000);
+            primaryStage.setMaximized(false); // Permitir maximizar
         }
 
         primaryStage.show();
