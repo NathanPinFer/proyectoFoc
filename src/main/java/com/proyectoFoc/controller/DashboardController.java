@@ -528,24 +528,63 @@ public class DashboardController {
         gridNuevo.setHgap(10);
         gridNuevo.setVgap(8);
 
+        // LABELS para cada campo
+        Label lblNombre = new Label("Nombre *");
+        lblNombre.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+        
+        Label lblApellidos = new Label("Apellidos *");
+        lblApellidos.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+        
+        Label lblDniLabel = new Label("DNI *");
+        lblDniLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+        
+        Label lblEmailLabel = new Label("Email *");
+        lblEmailLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+        
+        Label lblTelefonoLabel = new Label("Teléfono *");
+        lblTelefonoLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+
+        // TEXTFIELDS
         TextField txtNombre = new TextField();
-        txtNombre.setPromptText("Nombre *");
+        txtNombre.setPromptText("Ej: Juan");
+        
         TextField txtApellidos = new TextField();
-        txtApellidos.setPromptText("Apellidos *");
+        txtApellidos.setPromptText("Ej: García López");
+        
         TextField txtDni = new TextField();
-        txtDni.setPromptText("DNI *");
+        txtDni.setPromptText("Ej: 12345678A");
+        
         TextField txtEmail = new TextField();
-        txtEmail.setPromptText("Email *");
+        txtEmail.setPromptText("Ej: usuario@ejemplo.com");
+        
         TextField txtTelefono = new TextField();
-        txtTelefono.setPromptText("Teléfono *");
+        txtTelefono.setPromptText("Ej: 612345678");
+        
         CheckBox chkVip = new CheckBox("Cliente VIP");
 
-        gridNuevo.add(txtNombre, 0, 0);
-        gridNuevo.add(txtApellidos, 1, 0);
-        gridNuevo.add(txtDni, 0, 1);
-        gridNuevo.add(txtEmail, 1, 1);
-        gridNuevo.add(txtTelefono, 0, 2);
-        gridNuevo.add(chkVip, 1, 2);
+        // GRID
+        // Fila 0: Labels Nombre y Apellidos
+        gridNuevo.add(lblNombre, 0, 0);
+        gridNuevo.add(lblApellidos, 1, 0);
+        
+        // Fila 1: Campos Nombre y Apellidos
+        gridNuevo.add(txtNombre, 0, 1);
+        gridNuevo.add(txtApellidos, 1, 1);
+        
+        // Fila 2: Labels DNI y Email
+        gridNuevo.add(lblDniLabel, 0, 2);
+        gridNuevo.add(lblEmailLabel, 1, 2);
+        
+        // Fila 3: Campos DNI y Email
+        gridNuevo.add(txtDni, 0, 3);
+        gridNuevo.add(txtEmail, 1, 3);
+        
+        // Fila 4: Label Teléfono
+        gridNuevo.add(lblTelefonoLabel, 0, 4);
+        
+        // Fila 5: Campo Teléfono y CheckBox VIP
+        gridNuevo.add(txtTelefono, 0, 5);
+        gridNuevo.add(chkVip, 1, 5);
 
         // Hacer que las columnas se expandan igual
         ColumnConstraints col1 = new ColumnConstraints();
@@ -567,6 +606,7 @@ public class DashboardController {
             lblErrorNuevo.setVisible(false);
             lblErrorNuevo.setManaged(false);
 
+            // Campos obligatorios
             if (txtNombre.getText().trim().isEmpty() || txtApellidos.getText().trim().isEmpty()
                     || txtDni.getText().trim().isEmpty() || txtEmail.getText().trim().isEmpty()
                     || txtTelefono.getText().trim().isEmpty()) {
@@ -576,13 +616,41 @@ public class DashboardController {
                 return;
             }
 
+            String dni = txtDni.getText().trim().toUpperCase();
+            String email = txtEmail.getText().trim();
+            String telefono = txtTelefono.getText().trim();
+
+            // Validacion DNI
+            if (!dni.matches("^[0-9]{8}[A-Z]$")) {
+                lblErrorNuevo.setText("DNI inválido. Formato correcto: 12345678A");
+                lblErrorNuevo.setVisible(true);
+                lblErrorNuevo.setManaged(true);
+                return;
+            }
+
+            // Validacion email
+            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                lblErrorNuevo.setText("Email inválido. Ejemplo: usuario@ejemplo.com");
+                lblErrorNuevo.setVisible(true);
+                lblErrorNuevo.setManaged(true);
+                return;
+            }
+
+            // Validacion telefono
+            if (!telefono.matches("^[0-9]{9}$")) {
+                lblErrorNuevo.setText("Teléfono inválido. Debe tener exactamente 9 dígitos");
+                lblErrorNuevo.setVisible(true);
+                lblErrorNuevo.setManaged(true);
+                return;
+            }
+
             try {
                 ClienteDTO nuevoDTO = new ClienteDTO();
                 nuevoDTO.setNombre(txtNombre.getText().trim());
                 nuevoDTO.setApellidos(txtApellidos.getText().trim());
-                nuevoDTO.setDni(txtDni.getText().trim());
-                nuevoDTO.setEmail(txtEmail.getText().trim());
-                nuevoDTO.setTelefono(txtTelefono.getText().trim());
+                nuevoDTO.setDni(dni);  // Usar DNI en mayúsculas
+                nuevoDTO.setEmail(email);
+                nuevoDTO.setTelefono(telefono);
                 nuevoDTO.setVip(chkVip.isSelected());
 
                 ClienteDTO creado = clienteService.crearCliente(nuevoDTO);
