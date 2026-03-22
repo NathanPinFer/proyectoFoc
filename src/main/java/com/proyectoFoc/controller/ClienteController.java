@@ -576,8 +576,23 @@ public class ClienteController {
             return false;
         }
 
+        //Validar gmail
         if (!emailField.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             mostrarErrorModal("El formato del email no es válido");
+            return false;
+        }
+
+        // Validar DNI
+        String dni = dniField.getText().trim();
+        if (!dni.matches("^\\d{8}[a-zA-Z]$")) {
+            mostrarErrorModal("El DNI debe contener exactamente 8 números y 1 letra.");
+            return false;
+        }
+
+        // Validar Teléfono
+        String telefono = telefonoField.getText().trim();
+        if (!telefono.matches("^\\d{9}$")) {
+            mostrarErrorModal("El teléfono debe contener exactamente 9 dígitos.");
             return false;
         }
 
