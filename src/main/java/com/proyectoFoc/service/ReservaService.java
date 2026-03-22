@@ -58,10 +58,6 @@ public class ReservaService {
             throw new RuntimeException("La fecha de entrada no puede ser posterior a la de salida");
         }
 
-        if (dto.getFechaEntrada().isBefore(LocalDate.now())) {
-            throw new RuntimeException("La fecha de entrada no puede ser anterior a hoy");
-        }
-
         // Verificar disponibilidad
         Long reservasExistentes = detalleReservaRepository.verificarDisponibilidad(
                 dto.getIdHabitacion(),
@@ -128,5 +124,13 @@ public class ReservaService {
      */
     public Long contarReservasCliente(Integer idCliente) {
         return reservaRepository.countByClienteIdCliente(idCliente);
+    }
+
+    @Transactional
+    public void actualizarEstado(Integer idReserva, String estado) {
+        Reserva reserva = reservaRepository.findById(idReserva)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+        reserva.setEstadoReserva(estado);
+        reservaRepository.save(reserva);
     }
 }

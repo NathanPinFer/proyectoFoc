@@ -26,7 +26,8 @@ public interface DetalleReservaRepository extends JpaRepository<DetalleReserva, 
            "dr.fechaEntrada, " +
            "dr.fechaSalida, " +
            "dr.precioNoche, " +
-           "dr.subtotal) " +
+           "dr.subtotal, " +
+           "dr.reserva.estadoReserva) " +
            "FROM DetalleReserva dr " +
            "WHERE (dr.fechaEntrada <= :finMes AND dr.fechaSalida >= :inicioMes) " +
            "AND dr.reserva.estadoReserva != 'Cancelada' " +

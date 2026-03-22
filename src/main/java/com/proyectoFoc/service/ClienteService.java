@@ -128,9 +128,10 @@ public class ClienteService {
             throw new RuntimeException("Ya existe un cliente con este email");
         }
 
+
         // Convertir DTO a Entity
         Cliente cliente = new Cliente();
-        cliente.setDni(clienteDTO.getDni().trim());
+        cliente.setDni(clienteDTO.getDni().trim().toUpperCase());
         cliente.setNombre(clienteDTO.getNombre().trim());
         cliente.setApellidos(clienteDTO.getApellidos().trim());
         cliente.setEmail(clienteDTO.getEmail().trim().toLowerCase());
@@ -170,7 +171,7 @@ public class ClienteService {
         }
 
         // Actualizar campos
-        cliente.setDni(clienteDTO.getDni().trim());
+        cliente.setDni(clienteDTO.getDni().trim().toUpperCase());
         cliente.setNombre(clienteDTO.getNombre().trim());
         cliente.setApellidos(clienteDTO.getApellidos().trim());
         cliente.setEmail(clienteDTO.getEmail().trim().toLowerCase());

@@ -32,20 +32,45 @@ public class DashboardController {
 
     @FXML
     private Button btnEmpleados;
-    @FXML private GridPane gridCalendario;
-    @FXML private Label lblMesAnio;
-    @FXML private VBox panelDetalle;
-    @FXML private Label lblDetalleTitulo;
-    @FXML private Label lblDetalleEstado;
-    @FXML private Label lblDetalleHabitacion;
-    @FXML private Label lblDetalleTipoHab;
-    @FXML private Label lblDetalleCliente;
-    @FXML private Label lblDetalleVip;
-    @FXML private Label lblDetalleFechaEntrada;
-    @FXML private Label lblDetalleFechaSalida;
-    @FXML private Label lblDetalleNoches;
-    @FXML private Label lblDetallePrecioNoche;
-    @FXML private Label lblDetalleSubtotal;
+    @FXML
+    private Label lblMesAnio;
+    @FXML
+    private VBox panelDetalle;
+    @FXML
+    private Label lblDetalleTitulo;
+    @FXML
+    private Label lblDetalleEstado;
+    @FXML
+    private Label lblDetalleHabitacion;
+    @FXML
+    private Label lblDetalleTipoHab;
+    @FXML
+    private Label lblDetalleCliente;
+    @FXML
+    private Label lblDetalleVip;
+    @FXML
+    private Label lblDetalleFechaEntrada;
+    @FXML
+    private Label lblDetalleFechaSalida;
+    @FXML
+    private Label lblDetalleNoches;
+    @FXML
+    private Label lblDetallePrecioNoche;
+    @FXML
+    private Label lblDetalleSubtotal;
+
+    @FXML
+    private GridPane gridDias;
+    @FXML
+    private GridPane gridHabitaciones;
+    @FXML
+    private GridPane gridCeldas;
+    @FXML
+    private ScrollPane scrollDias;
+    @FXML
+    private ScrollPane scrollHabs;
+    @FXML
+    private ScrollPane scrollCeldas;
 
     @Autowired
     private StageManager stageManager;
@@ -63,7 +88,7 @@ public class DashboardController {
     private ClienteService clienteService;
 
     private YearMonth mesActual;
-    
+
     private static final int COL_HABITACION = 130;
     private static final int COL_DIA = 38;
     private static final int ROW_HEADER = 36;
@@ -74,6 +99,17 @@ public class DashboardController {
         mesActual = YearMonth.now();
         cargarCalendario();
         ocultarMenuSegunCargo();
+        sincronizarScrolls();
+    }
+
+    private void sincronizarScrolls() {
+        // Scroll horizontal: sincronizar scrollDias con scrollCeldas
+        scrollCeldas.hvalueProperty().addListener((obs, oldVal, newVal) -> scrollDias.setHvalue(newVal.doubleValue()));
+        scrollDias.hvalueProperty().addListener((obs, oldVal, newVal) -> scrollCeldas.setHvalue(newVal.doubleValue()));
+
+        // Scroll vertical: sincronizar scrollHabs con scrollCeldas
+        scrollCeldas.vvalueProperty().addListener((obs, oldVal, newVal) -> scrollHabs.setVvalue(newVal.doubleValue()));
+        scrollHabs.vvalueProperty().addListener((obs, oldVal, newVal) -> scrollCeldas.setVvalue(newVal.doubleValue()));
     }
 
     @FXML
@@ -117,31 +153,30 @@ public class DashboardController {
             List<ReservaCalendarioDTO> reservas,
             int mes, int anio) {
 
-        gridCalendario.getChildren().clear();
-        gridCalendario.getColumnConstraints().clear();
-        gridCalendario.getRowConstraints().clear();
+        gridDias.getChildren().clear();
+        gridDias.getColumnConstraints().clear();
+        gridDias.getRowConstraints().clear();
+
+        gridHabitaciones.getChildren().clear();
+        gridHabitaciones.getColumnConstraints().clear();
+        gridHabitaciones.getRowConstraints().clear();
+
+        gridCeldas.getChildren().clear();
+        gridCeldas.getColumnConstraints().clear();
+        gridCeldas.getRowConstraints().clear();
 
         YearMonth ym = YearMonth.of(anio, mes);
         int diasEnMes = ym.lengthOfMonth();
         LocalDate hoy = LocalDate.now();
 
-        ColumnConstraints ccHab = new ColumnConstraints(COL_HABITACION);
-        ccHab.setHgrow(Priority.NEVER);
-        gridCalendario.getColumnConstraints().add(ccHab);
-
+        // --- GRID DÍAS (cabecera horizontal) ---
         for (int d = 1; d <= diasEnMes; d++) {
             ColumnConstraints cc = new ColumnConstraints(COL_DIA);
             cc.setHgrow(Priority.NEVER);
-            gridCalendario.getColumnConstraints().add(cc);
+            gridDias.getColumnConstraints().add(cc);
         }
-
-        RowConstraints rcHeader = new RowConstraints(ROW_HEADER);
-        gridCalendario.getRowConstraints().add(rcHeader);
-
-        Pane esquina = new Pane();
-        esquina.setStyle("-fx-background-color: #34495E; -fx-border-color: #2C3E50; -fx-border-width: 0 1 1 0;");
-        esquina.setMinSize(COL_HABITACION, ROW_HEADER);
-        gridCalendario.add(esquina, 0, 0);
+        RowConstraints rcDias = new RowConstraints(ROW_HEADER);
+        gridDias.getRowConstraints().add(rcDias);
 
         for (int d = 1; d <= diasEnMes; d++) {
             LocalDate fecha = LocalDate.of(anio, mes, d);
@@ -149,28 +184,34 @@ public class DashboardController {
 
             VBox celdaDia = new VBox();
             celdaDia.setAlignment(Pos.CENTER);
-            celdaDia.setStyle("-fx-background-color: " + (esHoy ? "#E8F4F8" : "#F8F9FA") + 
-                            "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
+            celdaDia.setStyle("-fx-background-color: " + (esHoy ? "#2980b9" : "#F8F9FA") +
+                    "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
             celdaDia.setMinSize(COL_DIA, ROW_HEADER);
 
             Label lblDia = new Label(String.valueOf(d));
-            lblDia.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
+            lblDia.setStyle("-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: "
+                    + (esHoy ? "white" : "#2C3E50") + ";");
 
             String diaSemana = fecha.getDayOfWeek()
                     .getDisplayName(TextStyle.SHORT, new Locale("es", "ES"));
             Label lblDiaSem = new Label(diaSemana.substring(0, 1).toUpperCase());
-            lblDiaSem.setStyle("-fx-font-weight: normal; -fx-font-size: 9px; -fx-text-fill: #2C3E50;");
+            lblDiaSem.setStyle("-fx-font-weight: normal; -fx-font-size: 9px; -fx-text-fill: "
+                    + (esHoy ? "white" : "#2C3E50") + ";");
 
             celdaDia.getChildren().addAll(lblDia, lblDiaSem);
-            gridCalendario.add(celdaDia, d, 0);
+            gridDias.add(celdaDia, d - 1, 0);
         }
+
+        // --- GRID HABITACIONES (columna izquierda fija) ---
+        ColumnConstraints ccHab = new ColumnConstraints(COL_HABITACION);
+        ccHab.setHgrow(Priority.NEVER);
+        gridHabitaciones.getColumnConstraints().add(ccHab);
 
         for (int i = 0; i < habitaciones.size(); i++) {
             Habitacion hab = habitaciones.get(i);
-            int fila = i + 1;
 
             RowConstraints rc = new RowConstraints(ROW_HAB);
-            gridCalendario.getRowConstraints().add(rc);
+            gridHabitaciones.getRowConstraints().add(rc);
 
             VBox celdaHab = new VBox(2);
             celdaHab.setAlignment(Pos.CENTER_LEFT);
@@ -185,7 +226,21 @@ public class DashboardController {
             lblTipo.setStyle("-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 10px;");
 
             celdaHab.getChildren().addAll(lblNum, lblTipo);
-            gridCalendario.add(celdaHab, 0, fila);
+            gridHabitaciones.add(celdaHab, 0, i);
+        }
+
+        // --- GRID CELDAS (área central con reservas) ---
+        for (int d = 1; d <= diasEnMes; d++) {
+            ColumnConstraints cc = new ColumnConstraints(COL_DIA);
+            cc.setHgrow(Priority.NEVER);
+            gridCeldas.getColumnConstraints().add(cc);
+        }
+
+        for (int i = 0; i < habitaciones.size(); i++) {
+            Habitacion hab = habitaciones.get(i);
+
+            RowConstraints rc = new RowConstraints(ROW_HAB);
+            gridCeldas.getRowConstraints().add(rc);
 
             for (int d = 1; d <= diasEnMes; d++) {
                 LocalDate fecha = LocalDate.of(anio, mes, d);
@@ -194,42 +249,47 @@ public class DashboardController {
 
                 Pane celdaVacia = new Pane();
                 celdaVacia.setStyle("-fx-background-color: " + (esFinSemana ? "#FAFAFA" : "white") +
-                                  "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
+                        "; -fx-border-color: #ECF0F1; -fx-border-width: 0 1 1 0;");
                 celdaVacia.setMinSize(COL_DIA, ROW_HAB);
-                
+
                 final LocalDate fechaCelda = fecha;
                 final Habitacion habCelda = hab;
                 celdaVacia.setOnMouseClicked(e -> abrirFormularioReserva(habCelda, fechaCelda));
                 celdaVacia.setStyle(celdaVacia.getStyle() + " -fx-cursor: hand;");
-                
-                gridCalendario.add(celdaVacia, d, fila);
+
+                gridCeldas.add(celdaVacia, d - 1, i);
             }
         }
+
+        // --- BLOQUES DE RESERVAS ---
+        LocalDate inicioMes = LocalDate.of(anio, mes, 1);
+        LocalDate finMes = LocalDate.of(anio, mes, diasEnMes);
 
         for (ReservaCalendarioDTO reserva : reservas) {
             int filaHab = -1;
             for (int i = 0; i < habitaciones.size(); i++) {
                 if (habitaciones.get(i).getIdHabitacion().equals(reserva.getIdHabitacion())) {
-                    filaHab = i + 1;
+                    filaHab = i;
                     break;
                 }
             }
-            if (filaHab == -1) continue;
-
-            LocalDate inicioMes = LocalDate.of(anio, mes, 1);
-            LocalDate finMes = LocalDate.of(anio, mes, diasEnMes);
+            if (filaHab == -1)
+                continue;
 
             LocalDate bloqueInicio = reserva.getFechaEntrada().isBefore(inicioMes)
-                    ? inicioMes : reserva.getFechaEntrada();
+                    ? inicioMes
+                    : reserva.getFechaEntrada();
             LocalDate bloqueFin = reserva.getFechaSalida().isAfter(finMes)
-                    ? finMes : reserva.getFechaSalida();
+                    ? finMes
+                    : reserva.getFechaSalida();
 
-            int colInicio = bloqueInicio.getDayOfMonth();
+            int colInicio = bloqueInicio.getDayOfMonth() - 1;
             int span = (int) (bloqueFin.toEpochDay() - bloqueInicio.toEpochDay());
-            if (span < 1) span = 1;
+            if (span < 1)
+                span = 1;
 
             HBox bloque = crearBloqueReserva(reserva, span);
-            gridCalendario.add(bloque, colInicio, filaHab);
+            gridCeldas.add(bloque, colInicio, filaHab);
             GridPane.setColumnSpan(bloque, span);
         }
     }
@@ -245,6 +305,8 @@ public class DashboardController {
             case "CHECKIN_HOY" -> "#27ae60";
             case "EN_CURSO" -> "#2980b9";
             case "CHECKOUT_HOY" -> "#e67e22";
+            case "FINALIZADA" -> "#95a5a6";
+            case "NO_SHOW" -> "#e74c3c";
             default -> "#8e44ad";
         };
         bloque.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 4; -fx-cursor: hand;");
@@ -266,7 +328,35 @@ public class DashboardController {
         textos.getChildren().addAll(lblNombre, lblPrecio);
         bloque.getChildren().add(textos);
 
-        bloque.setOnMouseClicked(e -> abrirDetalle(reserva));
+        bloque.setOnMouseClicked(e -> {
+            if (e.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+                abrirDetalle(reserva);
+            }
+        });
+
+        ContextMenu menu = new ContextMenu();
+
+        MenuItem itemCheckin = new MenuItem("✅ Marcar Check-in");
+        itemCheckin.setOnAction(e -> {
+            reservaService.actualizarEstado(reserva.getIdReserva(), "Confirmada");
+            cargarCalendario();
+        });
+
+        MenuItem itemCheckout = new MenuItem("🏁 Marcar Check-out");
+        itemCheckout.setOnAction(e -> {
+            reservaService.actualizarEstado(reserva.getIdReserva(), "Completada");
+            cargarCalendario();
+        });
+
+        MenuItem itemNoShow = new MenuItem("❌ No-show");
+        itemNoShow.setOnAction(e -> {
+            reservaService.actualizarEstado(reserva.getIdReserva(), "No_presentado");
+            cargarCalendario();
+        });
+
+        menu.getItems().addAll(itemCheckin, itemCheckout, itemNoShow);
+
+        bloque.setOnContextMenuRequested(e -> menu.show(bloque, e.getScreenX(), e.getScreenY()));
 
         return bloque;
     }
@@ -278,12 +368,16 @@ public class DashboardController {
             case "CHECKIN_HOY" -> "CHECK-IN HOY";
             case "CHECKOUT_HOY" -> "CHECK-OUT HOY";
             case "EN_CURSO" -> "EN CURSO";
+            case "FINALIZADA" -> "FINALIZADA";
+            case "NO_SHOW" -> "NO-SHOW";
             default -> "RESERVA FUTURA";
         };
         String estadoColor = switch (reserva.getEstadoBloque()) {
             case "CHECKIN_HOY" -> "#27ae60";
             case "CHECKOUT_HOY" -> "#e67e22";
             case "EN_CURSO" -> "#2980b9";
+            case "FINALIZADA" -> "#95a5a6";
+            case "NO_SHOW" -> "#e74c3c";
             default -> "#8e44ad";
         };
         lblDetalleEstado.setText(estadoTexto);
@@ -367,38 +461,38 @@ public class DashboardController {
 
         TextField txtBuscarCliente = new TextField();
         txtBuscarCliente.setPromptText("Buscar cliente por nombre o DNI...");
-        txtBuscarCliente.setStyle("-fx-pref-width: 100%;");
 
         ListView<ClienteDTO> listaClientes = new ListView<>();
         listaClientes.setPrefHeight(100);
         listaClientes.setVisible(false);
+        listaClientes.setManaged(false);
 
-        final ClienteDTO[] clienteSeleccionado = {null};
+        final ClienteDTO[] clienteSeleccionado = { null };
         Label lblClienteSeleccionado = new Label("(ningún cliente seleccionado)");
         lblClienteSeleccionado.setStyle("-fx-text-fill: #95a5a6; -fx-font-style: italic;");
 
         txtBuscarCliente.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null || newVal.trim().isEmpty()) {
                 listaClientes.setVisible(false);
+                listaClientes.setManaged(false);
                 return;
             }
-
             List<ClienteDTO> clientes = clienteService.buscarClientes(newVal);
             listaClientes.getItems().setAll(clientes);
             listaClientes.setVisible(!clientes.isEmpty());
+            listaClientes.setManaged(!clientes.isEmpty());
         });
 
         listaClientes.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(ClienteDTO item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
+                if (empty || item == null)
                     setText(null);
-                } else {
+                else
                     setText(item.getNombre() + " " + item.getApellidos() +
                             " — " + item.getDni() +
                             (Boolean.TRUE.equals(item.getVip()) ? " ⭐" : ""));
-                }
             }
         });
 
@@ -410,8 +504,179 @@ public class DashboardController {
                         selected.getApellidos() + " (" + selected.getDni() + ")");
                 lblClienteSeleccionado.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
                 listaClientes.setVisible(false);
+                listaClientes.setManaged(false);
                 txtBuscarCliente.clear();
             }
+        });
+
+        // --- SECCIÓN NUEVO CLIENTE ---
+        Button btnNuevoCliente = new Button("+ Nuevo cliente");
+        btnNuevoCliente.setStyle("-fx-background-color: transparent; -fx-text-fill: #2980b9; " +
+                "-fx-font-size: 12px; -fx-cursor: hand; -fx-border-color: #2980b9; " +
+                "-fx-border-radius: 4; -fx-padding: 4 10 4 10;");
+
+        VBox panelNuevoCliente = new VBox(10);
+        panelNuevoCliente.setVisible(false);
+        panelNuevoCliente.setManaged(false);
+        panelNuevoCliente.setStyle("-fx-background-color: #F8F9FA; -fx-border-color: #ECF0F1; " +
+                "-fx-border-radius: 6; -fx-padding: 12;");
+
+        Label lblTituloNuevo = new Label("NUEVO CLIENTE");
+        lblTituloNuevo.setStyle("-fx-font-size: 11px; -fx-text-fill: #5a7a9a; -fx-font-weight: bold;");
+
+        GridPane gridNuevo = new GridPane();
+        gridNuevo.setHgap(10);
+        gridNuevo.setVgap(8);
+
+        // LABELS para cada campo
+        Label lblNombre = new Label("Nombre *");
+        lblNombre.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+        
+        Label lblApellidos = new Label("Apellidos *");
+        lblApellidos.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+        
+        Label lblDniLabel = new Label("DNI *");
+        lblDniLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+        
+        Label lblEmailLabel = new Label("Email *");
+        lblEmailLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+        
+        Label lblTelefonoLabel = new Label("Teléfono *");
+        lblTelefonoLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #2C3E50; -fx-font-weight: bold;");
+
+        // TEXTFIELDS
+        TextField txtNombre = new TextField();
+        txtNombre.setPromptText("Ej: Juan");
+        
+        TextField txtApellidos = new TextField();
+        txtApellidos.setPromptText("Ej: García López");
+        
+        TextField txtDni = new TextField();
+        txtDni.setPromptText("Ej: 12345678A");
+        
+        TextField txtEmail = new TextField();
+        txtEmail.setPromptText("Ej: usuario@ejemplo.com");
+        
+        TextField txtTelefono = new TextField();
+        txtTelefono.setPromptText("Ej: 612345678");
+        
+        CheckBox chkVip = new CheckBox("Cliente VIP");
+
+        // GRID
+        // Fila 0: Labels Nombre y Apellidos
+        gridNuevo.add(lblNombre, 0, 0);
+        gridNuevo.add(lblApellidos, 1, 0);
+        
+        // Fila 1: Campos Nombre y Apellidos
+        gridNuevo.add(txtNombre, 0, 1);
+        gridNuevo.add(txtApellidos, 1, 1);
+        
+        // Fila 2: Labels DNI y Email
+        gridNuevo.add(lblDniLabel, 0, 2);
+        gridNuevo.add(lblEmailLabel, 1, 2);
+        
+        // Fila 3: Campos DNI y Email
+        gridNuevo.add(txtDni, 0, 3);
+        gridNuevo.add(txtEmail, 1, 3);
+        
+        // Fila 4: Label Teléfono
+        gridNuevo.add(lblTelefonoLabel, 0, 4);
+        
+        // Fila 5: Campo Teléfono y CheckBox VIP
+        gridNuevo.add(txtTelefono, 0, 5);
+        gridNuevo.add(chkVip, 1, 5);
+
+        // Hacer que las columnas se expandan igual
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(50);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(50);
+        gridNuevo.getColumnConstraints().addAll(col1, col2);
+
+        Button btnCrearCliente = new Button("Crear y seleccionar");
+        btnCrearCliente.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; " +
+                "-fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 6 14 6 14;");
+
+        Label lblErrorNuevo = new Label("");
+        lblErrorNuevo.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 11px;");
+        lblErrorNuevo.setVisible(false);
+        lblErrorNuevo.setManaged(false);
+
+        btnCrearCliente.setOnAction(e -> {
+            lblErrorNuevo.setVisible(false);
+            lblErrorNuevo.setManaged(false);
+
+            // Campos obligatorios
+            if (txtNombre.getText().trim().isEmpty() || txtApellidos.getText().trim().isEmpty()
+                    || txtDni.getText().trim().isEmpty() || txtEmail.getText().trim().isEmpty()
+                    || txtTelefono.getText().trim().isEmpty()) {
+                lblErrorNuevo.setText("Todos los campos marcados con * son obligatorios");
+                lblErrorNuevo.setVisible(true);
+                lblErrorNuevo.setManaged(true);
+                return;
+            }
+
+            String dni = txtDni.getText().trim().toUpperCase();
+            String email = txtEmail.getText().trim();
+            String telefono = txtTelefono.getText().trim();
+
+            // Validacion DNI
+            if (!dni.matches("^[0-9]{8}[A-Z]$")) {
+                lblErrorNuevo.setText("DNI inválido. Formato correcto: 12345678A");
+                lblErrorNuevo.setVisible(true);
+                lblErrorNuevo.setManaged(true);
+                return;
+            }
+
+            // Validacion email
+            if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                lblErrorNuevo.setText("Email inválido. Ejemplo: usuario@ejemplo.com");
+                lblErrorNuevo.setVisible(true);
+                lblErrorNuevo.setManaged(true);
+                return;
+            }
+
+            // Validacion telefono
+            if (!telefono.matches("^[0-9]{9}$")) {
+                lblErrorNuevo.setText("Teléfono inválido. Debe tener exactamente 9 dígitos");
+                lblErrorNuevo.setVisible(true);
+                lblErrorNuevo.setManaged(true);
+                return;
+            }
+
+            try {
+                ClienteDTO nuevoDTO = new ClienteDTO();
+                nuevoDTO.setNombre(txtNombre.getText().trim());
+                nuevoDTO.setApellidos(txtApellidos.getText().trim());
+                nuevoDTO.setDni(dni);  // Usar DNI en mayúsculas
+                nuevoDTO.setEmail(email);
+                nuevoDTO.setTelefono(telefono);
+                nuevoDTO.setVip(chkVip.isSelected());
+
+                ClienteDTO creado = clienteService.crearCliente(nuevoDTO);
+                clienteSeleccionado[0] = creado;
+                lblClienteSeleccionado.setText("✓ " + creado.getNombre() + " " +
+                        creado.getApellidos() + " (" + creado.getDni() + ")");
+                lblClienteSeleccionado.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
+
+                panelNuevoCliente.setVisible(false);
+                panelNuevoCliente.setManaged(false);
+                btnNuevoCliente.setText("+ Nuevo cliente");
+
+            } catch (Exception ex) {
+                lblErrorNuevo.setText(ex.getMessage());
+                lblErrorNuevo.setVisible(true);
+                lblErrorNuevo.setManaged(true);
+            }
+        });
+
+        panelNuevoCliente.getChildren().addAll(lblTituloNuevo, gridNuevo, lblErrorNuevo, btnCrearCliente);
+
+        btnNuevoCliente.setOnAction(e -> {
+            boolean visible = !panelNuevoCliente.isVisible();
+            panelNuevoCliente.setVisible(visible);
+            panelNuevoCliente.setManaged(visible);
+            btnNuevoCliente.setText(visible ? "✕ Cancelar" : "+ Nuevo cliente");
         });
 
         contenido.getChildren().addAll(
@@ -423,10 +688,15 @@ public class DashboardController {
                 lblSecCliente,
                 txtBuscarCliente,
                 listaClientes,
-                lblClienteSeleccionado
-        );
+                lblClienteSeleccionado,
+                btnNuevoCliente,
+                panelNuevoCliente);
 
-        dialog.getDialogPane().setContent(contenido);
+        ScrollPane scrollContenido = new ScrollPane(contenido);
+        scrollContenido.setFitToWidth(true);
+        scrollContenido.setStyle("-fx-background-color: white; -fx-background: white;");
+        scrollContenido.setPrefHeight(500);
+        dialog.getDialogPane().setContent(scrollContenido);
 
         dialog.setResultConverter(btn -> {
             if (btn == btnGuardar) {
