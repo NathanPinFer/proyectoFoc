@@ -1,13 +1,10 @@
 package com.proyectoFoc.service;
 
-import com.proyectoFoc.dto.EmpleadoDTO;
 import com.proyectoFoc.entity.Empleado;
 import com.proyectoFoc.repository.EmpleadoRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -16,59 +13,77 @@ public class AuthService {
     private EmpleadoRepository empleadoRepository;
 
     /**
-     * Getter para el usuario actual autenticado
-     *  Obtenemos el usuario actual a través de un DTO para no exponer la entidad completa
+     * -- GETTER --
+     *  Obtener el empleado que ha iniciado sesión
      */
-    // Sesión actual
     @Getter
-    private EmpleadoDTO usuarioActual;
+    private Empleado empleadoActual;
 
     /**
-     * Intenta autenticar un usuario
-     * @param usuario nombre de usuario
-     * @param password contraseña
-     * @return EmpleadoDTO si login exitoso, null si falla
+     * Iniciar sesión
+     * @return true si las credenciales son correctas, false en caso contrario
      */
-    public EmpleadoDTO login(String usuario, String password) {
-        // Buscar empleado por usuario y contraseña
-        Optional<Empleado> empleadoOpt = empleadoRepository.findByUsuarioAndPassword(usuario, password);
+    public boolean login(String usuario, String password) {
+        Empleado empleado = empleadoRepository.findByUsuario(usuario).orElse(null);
 
-        // Si se encuentra el empleado, verificar que esté activo
-        if (empleadoOpt.isPresent()) {
-            Empleado empleado = empleadoOpt.get();
-
-            // Verificar que esté activo
-            if (!empleado.getActivo()) {
-                return null; // Usuario desactivado
+        if (empleado != null && empleado.getPassword().equals(password)) {
+            // Verificar que el empleado esté activo
+            if (Boolean.FALSE.equals(empleado.getActivo())) {
+                return false; // Empleado desactivado
             }
-
-            // Crear DTO y guardar sesión
-            usuarioActual = new EmpleadoDTO(empleado);
-            return usuarioActual;
+            
+            empleadoActual = empleado;
+            return true;
         }
 
-        return null; // Login fallido
+        return false;
     }
 
     /**
      * Cerrar sesión
      */
     public void logout() {
-        usuarioActual = null;
+        empleadoActual = null;
     }
 
     /**
-     * Verificar si hay una sesión activa
+     * Verificar si hay un empleado autenticado
      */
     public boolean isAuthenticated() {
-        return usuarioActual != null;
+        return empleadoActual != null;
     }
 
     /**
-     * Verificar si el usuario actual es gerente
+     * Verificar si el empleado actual es gerente
      */
     public boolean isGerente() {
-        return usuarioActual != null && usuarioActual.isGerente();
+        return empleadoActual != null && "Gerente".equals(empleadoActual.getCargo());
     }
 
+    /**
+     * Obtener el cargo del empleado actual
+     */
+    public String getCargoActual() {
+        return empleadoActual != null ? empleadoActual.getCargo() : null;
+    }
+
+    /**
+     * Verificar si el empleado debe cambiar su contraseña
+     * @return true si debe cambiar, false si no
+     */
+    public boolean debeCambiarPassword() {
+        return empleadoActual != null && 
+               Boolean.TRUE.equals(empleadoActual.getDebeCambiarPassword());
+    }
+
+    /**
+     * Recargar los datos del empleado actual desde la BD
+     * (Útil después de cambiar la contraseña)
+     */
+    public void recargarEmpleadoActual() {
+        if (empleadoActual != null) {
+            empleadoActual = empleadoRepository.findById(empleadoActual.getIdEmpleado())
+                    .orElse(null);
+        }
+    }
 }

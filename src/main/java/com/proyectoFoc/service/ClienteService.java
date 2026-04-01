@@ -128,7 +128,6 @@ public class ClienteService {
             throw new RuntimeException("Ya existe un cliente con este email");
         }
 
-
         // Convertir DTO a Entity
         Cliente cliente = new Cliente();
         cliente.setDni(clienteDTO.getDni().trim().toUpperCase());

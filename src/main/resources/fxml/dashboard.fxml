@@ -51,7 +51,7 @@
                         </graphic>
                     </Button>
 
-                    <Button styleClass="menu-item">
+                    <Button styleClass="menu-item" >
                         <graphic>
                             <HBox spacing="15" alignment="CENTER_LEFT">
                                 <Label text="🛏️" style="-fx-font-size: 22px;" />
@@ -60,16 +60,7 @@
                         </graphic>
                     </Button>
 
-                    <Button styleClass="menu-item">
-                        <graphic>
-                            <HBox spacing="15" alignment="CENTER_LEFT">
-                                <Label text="💰" style="-fx-font-size: 22px;" />
-                                <Label text="Facturación" />
-                            </HBox>
-                        </graphic>
-                    </Button>
-
-                    <Button fx:id="btnEmpleados" styleClass="menu-item">
+                    <Button fx:id="btnEmpleados" styleClass="menu-item" onAction="#navegarEmpleados">
                         <graphic>
                             <HBox spacing="15" alignment="CENTER_LEFT">
                                 <Label text="👔" style="-fx-font-size: 22px;" />

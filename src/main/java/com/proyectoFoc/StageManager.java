@@ -60,7 +60,7 @@ public class StageManager {
             case LOGIN -> "/css/login.css";
             case DASHBOARD -> "/css/dashboard.css";
             case CLIENTES -> "/css/clientes.css";
-            default -> null;
+            case EMPLEADOS -> "/css/empleados.css";
         };
     }
 }

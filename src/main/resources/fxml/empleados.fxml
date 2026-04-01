@@ -7,7 +7,7 @@
 
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.proyectoFoc.controller.ClienteController">
+           fx:controller="com.proyectoFoc.controller.EmpleadosController">
 
     <!-- CONTENEDOR PRINCIPAL -->
     <BorderPane styleClass="main-container">
@@ -25,7 +25,7 @@
 
                 <!-- Menú de navegación -->
                 <VBox styleClass="menu" spacing="5" VBox.vgrow="ALWAYS">
-                    <Button styleClass="menu-item" onAction="#volverDashboard">
+                    <Button styleClass="menu-item" onAction="#navegarDashboard">
                         <graphic>
                             <HBox spacing="15" alignment="CENTER_LEFT">
                                 <Label text="📊" style="-fx-font-size: 22px;"/>
@@ -43,7 +43,7 @@
                         </graphic>
                     </Button>
 
-                    <Button styleClass="menu-item, active">
+                    <Button styleClass="menu-item" onAction="#navegarClientes">
                         <graphic>
                             <HBox spacing="15" alignment="CENTER_LEFT">
                                 <Label text="👥" style="-fx-font-size: 22px;"/>
@@ -61,7 +61,7 @@
                         </graphic>
                     </Button>
 
-                    <Button styleClass="menu-item" onAction="#navegarEmpleados">
+                    <Button styleClass="menu-item, active">
                         <graphic>
                             <HBox spacing="15" alignment="CENTER_LEFT">
                                 <Label text="👔" style="-fx-font-size: 22px;"/>
@@ -91,76 +91,85 @@
 
                 <!-- TOPBAR -->
                 <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="20">
-                    <Label text="Gestión de Clientes" styleClass="topbar-title">
+                    <Label text="Gestión de Empleados" styleClass="topbar-title">
                         <font><Font name="System Bold" size="28"/></font>
                     </Label>
                     <Region HBox.hgrow="ALWAYS"/>
-                    <Button text="➕ Nuevo Cliente" styleClass="btn-primary" onAction="#abrirModalNuevo"/>
+                    <Button text="➕ Nuevo Empleado" styleClass="btn-primary" onAction="#abrirModalNuevo"/>
                 </HBox>
 
                 <!-- ESTADÍSTICAS -->
                 <GridPane styleClass="stats-bar" hgap="15" vgap="15">
                     <columnConstraints>
-                        <ColumnConstraints percentWidth="25"/>
-                        <ColumnConstraints percentWidth="25"/>
-                        <ColumnConstraints percentWidth="25"/>
-                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="20"/>
                     </columnConstraints>
 
                     <VBox styleClass="stat-mini" alignment="CENTER" spacing="5" GridPane.columnIndex="0">
-                        <Label fx:id="totalClientesLabel" text="0" styleClass="stat-mini-value">
+                        <Label fx:id="totalEmpleadosLabel" text="0" styleClass="stat-mini-value">
                             <font><Font name="System Bold" size="28"/></font>
                         </Label>
-                        <Label text="Total Clientes" styleClass="stat-mini-label"/>
+                        <Label text="Total Empleados" styleClass="stat-mini-label"/>
                     </VBox>
 
                     <VBox styleClass="stat-mini" alignment="CENTER" spacing="5" GridPane.columnIndex="1">
-                        <Label fx:id="clientesVIPLabel" text="0" styleClass="stat-mini-value">
+                        <Label fx:id="gerentesLabel" text="0" styleClass="stat-mini-value">
                             <font><Font name="System Bold" size="28"/></font>
                         </Label>
-                        <Label text="Clientes VIP" styleClass="stat-mini-label"/>
+                        <Label text="Gerentes" styleClass="stat-mini-label"/>
                     </VBox>
 
                     <VBox styleClass="stat-mini" alignment="CENTER" spacing="5" GridPane.columnIndex="2">
-                        <Label fx:id="clientesRegularesLabel" text="0" styleClass="stat-mini-value">
+                        <Label fx:id="recepcionistasLabel" text="0" styleClass="stat-mini-value">
                             <font><Font name="System Bold" size="28"/></font>
                         </Label>
-                        <Label text="Clientes Regulares" styleClass="stat-mini-label"/>
+                        <Label text="Recepcionistas" styleClass="stat-mini-label"/>
                     </VBox>
 
                     <VBox styleClass="stat-mini" alignment="CENTER" spacing="5" GridPane.columnIndex="3">
-                        <Label fx:id="clientesNuevosHoyLabel" text="0" styleClass="stat-mini-value">
+                        <Label fx:id="mantenimientoLabel" text="0" styleClass="stat-mini-value">
                             <font><Font name="System Bold" size="28"/></font>
                         </Label>
-                        <Label text="Nuevos Hoy" styleClass="stat-mini-label"/>
+                        <Label text="Mantenimiento" styleClass="stat-mini-label"/>
+                    </VBox>
+
+                    <VBox styleClass="stat-mini" alignment="CENTER" spacing="5" GridPane.columnIndex="4">
+                        <Label fx:id="activosLabel" text="0" styleClass="stat-mini-value">
+                            <font><Font name="System Bold" size="28"/></font>
+                        </Label>
+                        <Label text="Activos" styleClass="stat-mini-label"/>
                     </VBox>
                 </GridPane>
 
                 <!-- BARRA DE BÚSQUEDA -->
                 <HBox styleClass="search-bar" spacing="15" alignment="CENTER_LEFT">
-                    <TextField fx:id="buscarField" promptText="🔍 Buscar por nombre, DNI, email..." 
+                    <TextField fx:id="buscarField" promptText="🔍 Buscar por nombre, DNI, email, usuario..." 
                               styleClass="search-input" HBox.hgrow="ALWAYS"
-                              onKeyReleased="#buscarClientes"/>
-                    <Button text="Buscar" styleClass="btn-search" onAction="#buscarClientes"/>
+                              onKeyReleased="#buscarEmpleados"/>
+                    <Button text="Buscar" styleClass="btn-search" onAction="#buscarEmpleados"/>
                 </HBox>
 
-                <!-- TABLA DE CLIENTES -->
-                <VBox fx:id="tableContainer" styleClass="clientes-table-container" VBox.vgrow="ALWAYS">
+                <!-- TABLA DE EMPLEADOS -->
+                <VBox fx:id="tableContainer" styleClass="empleados-table-container" VBox.vgrow="ALWAYS">
                     <HBox styleClass="table-header">
-                        <Label text="Lista de Clientes" styleClass="table-title">
+                        <Label text="Lista de Empleados" styleClass="table-title">
                             <font><Font name="System Bold" size="18"/></font>
                         </Label>
                     </HBox>
 
-                    <TableView fx:id="clientesTable">
+                    <TableView fx:id="empleadosTable">
                         <columns>
-                            <TableColumn fx:id="nombreColumn" text="CLIENTE" prefWidth="250"/>
+                            <TableColumn fx:id="nombreColumn" text="EMPLEADO" prefWidth="200"/>
                             <TableColumn fx:id="dniColumn" text="DNI" prefWidth="120"/>
-                            <TableColumn fx:id="telefonoColumn" text="TELÉFONO" prefWidth="150"/>
-                            <TableColumn fx:id="ciudadColumn" text="CIUDAD" prefWidth="130"/>
-                            <TableColumn fx:id="reservasColumn" text="RESERVAS" prefWidth="100"/>
-                            <TableColumn fx:id="estadoColumn" text="ESTADO" prefWidth="120"/>
-                            <TableColumn fx:id="accionesColumn" text="ACCIONES" prefWidth="180"/>
+                            <TableColumn fx:id="emailColumn" text="EMAIL" prefWidth="180"/>
+                            <TableColumn fx:id="usuarioColumn" text="USUARIO" prefWidth="120"/>
+                            <TableColumn fx:id="cargoColumn" text="CARGO" prefWidth="130"/>
+                            <TableColumn fx:id="fechaColumn" text="CONTRATACIÓN" prefWidth="130"/>
+                            <TableColumn fx:id="estadoColumn" text="ESTADO" prefWidth="100"/>
+                            <TableColumn fx:id="accionesColumn" text="ACCIONES" prefWidth="200"/>
                         </columns>
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
@@ -182,7 +191,7 @@
         <VBox styleClass="modal-content" maxWidth="700" maxHeight="-Infinity" spacing="20">
             <!-- Header -->
             <HBox styleClass="modal-header" alignment="CENTER_LEFT">
-                <Label fx:id="modalFormTitle" text="Nuevo Cliente" styleClass="modal-title">
+                <Label fx:id="modalFormTitle" text="Nuevo Empleado" styleClass="modal-title">
                     <font><Font name="System Bold" size="24"/></font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS"/>
@@ -204,12 +213,12 @@
 
                         <VBox spacing="8" GridPane.columnIndex="0">
                             <Label text="Nombre *" styleClass="form-label"/>
-                            <TextField fx:id="nombreField" promptText="Nombre del cliente" styleClass="form-input"/>
+                            <TextField fx:id="nombreField" promptText="Nombre del empleado" styleClass="form-input"/>
                         </VBox>
 
                         <VBox spacing="8" GridPane.columnIndex="1">
                             <Label text="Apellidos *" styleClass="form-label"/>
-                            <TextField fx:id="apellidosField" promptText="Apellidos del cliente" styleClass="form-input"/>
+                            <TextField fx:id="apellidosField" promptText="Apellidos del empleado" styleClass="form-input"/>
                         </VBox>
                     </GridPane>
 
@@ -232,12 +241,7 @@
 
                     <VBox spacing="8">
                         <Label text="Email *" styleClass="form-label"/>
-                        <TextField fx:id="emailField" promptText="cliente@ejemplo.com" styleClass="form-input"/>
-                    </VBox>
-
-                    <VBox spacing="8">
-                        <Label text="Dirección" styleClass="form-label"/>
-                        <TextField fx:id="direccionField" promptText="Calle, número, piso..." styleClass="form-input"/>
+                        <TextField fx:id="emailField" promptText="empleado@hotel.com" styleClass="form-input"/>
                     </VBox>
 
                     <GridPane hgap="15" vgap="10">
@@ -247,43 +251,46 @@
                         </columnConstraints>
 
                         <VBox spacing="8" GridPane.columnIndex="0">
-                            <Label text="Ciudad" styleClass="form-label"/>
-                            <TextField fx:id="ciudadField" promptText="Madrid" styleClass="form-input"/>
+                            <Label text="Usuario *" styleClass="form-label"/>
+                            <TextField fx:id="usuarioField" promptText="usuario_login" styleClass="form-input"/>
                         </VBox>
 
                         <VBox spacing="8" GridPane.columnIndex="1">
-                            <Label text="Código Postal" styleClass="form-label"/>
-                            <TextField fx:id="codigoPostalField" promptText="28001" styleClass="form-input"/>
+                            <Label text="Cargo *" styleClass="form-label"/>
+                            <ComboBox fx:id="cargoCombo" styleClass="form-input" maxWidth="Infinity" promptText="Seleccionar cargo"/>
                         </VBox>
                     </GridPane>
 
-                    <VBox spacing="8">
-                        <Label text="País" styleClass="form-label"/>
-                        <ComboBox fx:id="paisCombo" styleClass="form-input" maxWidth="Infinity"/>
+                    <!-- Campo password solo visible al crear -->
+                    <VBox fx:id="passwordContainer" spacing="8">
+                        <Label text="Contraseña Temporal *" styleClass="form-label"/>
+                        <PasswordField fx:id="passwordField" promptText="Contraseña temporal" styleClass="form-input"/>
+                        <Label text="💡 El empleado deberá cambiar esta contraseña en su primer inicio de sesión" 
+                               style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px; -fx-font-style: italic;"/>
                     </VBox>
 
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <CheckBox fx:id="vipCheckBox" text="Cliente VIP" styleClass="checkbox-vip"/>
-                    </HBox>
+                    <VBox spacing="8">
+                        <Label text="Salario (€)" styleClass="form-label"/>
+                        <TextField fx:id="salarioField" promptText="1500.00" styleClass="form-input"/>
+                    </VBox>
 
                     <Label fx:id="errorFormLabel" styleClass="error-label" visible="false" wrapText="true"/>
 
                     <HBox spacing="15" alignment="CENTER_RIGHT">
                         <Button text="Cancelar" styleClass="btn-secondary" onAction="#cerrarModalForm" prefWidth="120"/>
-                        <Button text="Guardar" styleClass="btn-submit" onAction="#guardarCliente" prefWidth="120"/>
+                        <Button text="Guardar" styleClass="btn-submit" onAction="#guardarEmpleado" prefWidth="120"/>
                     </HBox>
                 </VBox>
             </ScrollPane>
         </VBox>
     </StackPane>
 
-    <!-- MODAL DE DETALLES - CENTRADO Y ALTURA AUTOMÁTICA -->
+    <!-- MODAL DE DETALLES -->
     <StackPane fx:id="modalDetallesContainer" visible="false" managed="false"
                alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.6);">
-        <VBox styleClass="modal-content" maxWidth="600" maxHeight="-Infinity" spacing="20"
-              style="-fx-max-height: 80vh;">
+        <VBox styleClass="modal-content" maxWidth="600" maxHeight="-Infinity" spacing="20">
             <HBox styleClass="modal-header" alignment="CENTER_LEFT">
-                <Label text="Detalles del Cliente" styleClass="modal-title">
+                <Label text="Detalles del Empleado" styleClass="modal-title">
                     <font><Font name="System Bold" size="24"/></font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS"/>
@@ -292,8 +299,7 @@
                 </Button>
             </HBox>
 
-            <ScrollPane fitToWidth="true" fitToHeight="true" 
-                       style="-fx-background-color: white; -fx-background: white;">
+            <ScrollPane fitToWidth="true" style="-fx-background-color: white;">
                 <VBox spacing="20" style="-fx-background-color: white; -fx-padding: 25;">
                     <GridPane hgap="20" vgap="15">
                         <columnConstraints>
@@ -301,38 +307,32 @@
                             <ColumnConstraints percentWidth="60"/>
                         </columnConstraints>
 
-                        <Label text="Nombre Completo:" styleClass="detalle-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label text="Nombre Completo:" styleClass="detalle-label" GridPane.rowIndex="0"/>
                         <Label fx:id="detallesNombreLabel" styleClass="detalle-valor" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                        <Label text="DNI:" styleClass="detalle-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label text="DNI:" styleClass="detalle-label" GridPane.rowIndex="1"/>
                         <Label fx:id="detallesDniLabel" styleClass="detalle-valor" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                        <Label text="Email:" styleClass="detalle-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label text="Email:" styleClass="detalle-label" GridPane.rowIndex="2"/>
                         <Label fx:id="detallesEmailLabel" styleClass="detalle-valor" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                        <Label text="Teléfono:" styleClass="detalle-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label text="Teléfono:" styleClass="detalle-label" GridPane.rowIndex="3"/>
                         <Label fx:id="detallesTelefonoLabel" styleClass="detalle-valor" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-                        <Label text="Dirección:" styleClass="detalle-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                        <Label fx:id="detallesDireccionLabel" styleClass="detalle-valor" wrapText="true" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        <Label text="Usuario:" styleClass="detalle-label" GridPane.rowIndex="4"/>
+                        <Label fx:id="detallesUsuarioLabel" styleClass="detalle-valor" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-                        <Label text="Ciudad:" styleClass="detalle-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                        <Label fx:id="detallesCiudadLabel" styleClass="detalle-valor" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                        <Label text="Cargo:" styleClass="detalle-label" GridPane.rowIndex="5"/>
+                        <Label fx:id="detallesCargoLabel" styleClass="detalle-valor" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-                        <Label text="Código Postal:" styleClass="detalle-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                        <Label fx:id="detallesCodigoPostalLabel" styleClass="detalle-valor" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                        <Label text="Salario:" styleClass="detalle-label" GridPane.rowIndex="6"/>
+                        <Label fx:id="detallesSalarioLabel" styleClass="detalle-valor" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
 
-                        <Label text="País:" styleClass="detalle-label" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-                        <Label fx:id="detallesPaisLabel" styleClass="detalle-valor" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                        <Label text="Fecha Contratación:" styleClass="detalle-label" GridPane.rowIndex="7"/>
+                        <Label fx:id="detallesFechaLabel" styleClass="detalle-valor" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
 
-                        <Label text="Fecha de Registro:" styleClass="detalle-label" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
-                        <Label fx:id="detallesFechaRegistroLabel" styleClass="detalle-valor" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
-
-                        <Label text="Estado:" styleClass="detalle-label" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
-                        <Label fx:id="detallesEstadoLabel" styleClass="detalle-valor" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
-
-                        <Label text="Reservas Totales:" styleClass="detalle-label" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
-                        <Label fx:id="detallesReservasLabel" styleClass="detalle-valor" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
+                        <Label text="Estado:" styleClass="detalle-label" GridPane.rowIndex="8"/>
+                        <Label fx:id="detallesEstadoLabel" styleClass="detalle-valor" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
                     </GridPane>
 
                     <HBox alignment="CENTER">
@@ -342,4 +342,36 @@
             </ScrollPane>
         </VBox>
     </StackPane>
+
+    <!-- MODAL MOSTRAR CONTRASEÑA (Solo al crear) -->
+    <StackPane fx:id="modalPasswordContainer" visible="false" managed="false"
+               alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.7);">
+        <VBox styleClass="modal-content" maxWidth="500" spacing="20" style="-fx-padding: 30;">
+            <VBox spacing="15" alignment="CENTER">
+                <Label text="✅" style="-fx-font-size: 48px;"/>
+                <Label text="Empleado Creado Correctamente" styleClass="modal-title" wrapText="true" alignment="CENTER">
+                    <font><Font name="System Bold" size="20"/></font>
+                </Label>
+                
+                <VBox spacing="10" style="-fx-background-color: #FFF3CD; -fx-padding: 20; -fx-background-radius: 8;">
+                    <Label text="⚠️ CONTRASEÑA TEMPORAL" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #856404;"/>
+                    <Label text="Guarda esta contraseña y entrégasela al empleado. NO se volverá a mostrar." 
+                           wrapText="true" style="-fx-text-fill: #856404; -fx-font-size: 12px;"/>
+                    
+                    <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
+                        <Label text="Contraseña:" style="-fx-font-weight: bold; -fx-text-fill: #856404;"/>
+                        <Label fx:id="passwordMostradaLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e74c3c; -fx-background-color: white; -fx-padding: 5 15; -fx-background-radius: 4;"/>
+                    </HBox>
+                    
+                    <Label text="El empleado DEBE cambiar esta contraseña en su primer inicio de sesión." 
+                           wrapText="true" style="-fx-text-fill: #856404; -fx-font-size: 11px; -fx-font-style: italic;"/>
+                </VBox>
+            </VBox>
+
+            <Button text="Entendido" styleClass="btn-primary" onAction="#cerrarModalPassword" prefWidth="200" alignment="CENTER">
+                <font><Font size="14" name="System Bold"/></font>
+            </Button>
+        </VBox>
+    </StackPane>
+
 </StackPane>

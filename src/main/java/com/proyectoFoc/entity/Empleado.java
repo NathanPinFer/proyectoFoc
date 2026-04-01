@@ -47,4 +47,8 @@ public class Empleado {
     
     @Column(name = "activo")
     private Boolean activo;
+    
+    // NUEVO CAMPO para controlar cambio de contraseña obligatorio
+    @Column(name = "debe_cambiar_password")
+    private Boolean debeCambiarPassword = true; // Por defecto true para nuevos empleados
 }

@@ -113,6 +113,11 @@ public class DashboardController {
     }
 
     @FXML
+    private void navegarEmpleados() {
+        stageManager.switchScene(FxmlView.EMPLEADOS);
+    }
+
+    @FXML
     private void navegarClientes() {
         stageManager.switchScene(FxmlView.CLIENTES);
     }

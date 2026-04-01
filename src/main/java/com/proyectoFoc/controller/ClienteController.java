@@ -671,6 +671,11 @@ public class ClienteController {
     }
 
     @FXML
+    private void navegarEmpleados() {
+        stageManager.switchScene(FxmlView.EMPLEADOS);
+    }
+
+    @FXML
     private void cerrarSesion() {
         authService.logout();
         stageManager.switchScene(FxmlView.LOGIN);
