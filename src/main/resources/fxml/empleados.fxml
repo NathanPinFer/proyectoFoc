@@ -61,6 +61,15 @@
                         </graphic>
                     </Button>
 
+                    <Button styleClass="menu-item">
+                        <graphic>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="🧾" style="-fx-font-size: 22px;"/>
+                                <Label text="Facturación"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+
                     <Button styleClass="menu-item, active">
                         <graphic>
                             <HBox spacing="15" alignment="CENTER_LEFT">
@@ -273,6 +282,13 @@
                         <Label text="Salario (€)" styleClass="form-label"/>
                         <TextField fx:id="salarioField" promptText="1500.00" styleClass="form-input"/>
                     </VBox>
+
+                    <!-- Campo Activo (solo visible al editar) -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <CheckBox fx:id="activoCheckBox" text="Empleado Activo" 
+                                  styleClass="checkbox-vip" 
+                                  visible="false" managed="false"/>
+                    </HBox>
 
                     <Label fx:id="errorFormLabel" styleClass="error-label" visible="false" wrapText="true"/>
 

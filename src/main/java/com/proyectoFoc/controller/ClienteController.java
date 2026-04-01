@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @Component
 public class ClienteController {
@@ -559,9 +560,18 @@ public class ClienteController {
                 clienteService.eliminarCliente(cliente.getIdCliente());
                 cargarClientes();
                 actualizarEstadisticas();
-            } catch (Exception e) {
-                mostrarAlerta("Error", e.getMessage(), Alert.AlertType.ERROR);
+            } catch (org.springframework.dao.DataIntegrityViolationException e) {
+                    //Error si eliminar a un cliente que tiene reserva
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    error.setTitle("No se puede eliminar");
+                    error.setHeaderText("El cliente tiene reservas asociadas");
+                    error.setContentText("No se puede eliminar el cliente porque tiene reservas en el sistema. " +
+                            "Para eliminarlo, primero debe eliminar o reasignar sus reservas.");
+                    error.showAndWait();
+                } catch (Exception e) {
+                mostrarAlerta("Error al eliminar cliente", e.getMessage(), Alert.AlertType.ERROR);
             }
+
         }
     }
 

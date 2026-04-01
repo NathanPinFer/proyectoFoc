@@ -135,6 +135,7 @@ public class EmpleadoService {
         empleado.setUsuario(dto.getUsuario());
         empleado.setCargo(dto.getCargo());
         empleado.setSalario(dto.getSalario());
+        empleado.setActivo(dto.getActivo());  // Actualizar estado activo/inactivo
         // NO actualizar password aquí
         
         Empleado actualizado = empleadoRepository.save(empleado);

@@ -56,6 +56,7 @@ public class EmpleadosController {
     @FXML private ComboBox<String> cargoCombo;
     @FXML private TextField salarioField;
     @FXML private VBox passwordContainer;
+    @FXML private CheckBox activoCheckBox;  // Nuevo: gestionar activo/inactivo
     @FXML private Label errorFormLabel;
     
     // Modal Detalles
@@ -74,9 +75,7 @@ public class EmpleadosController {
     @FXML private StackPane modalPasswordContainer;
     @FXML private Label passwordMostradaLabel;
 
-    // =============================================
     // SERVICIOS
-    // =============================================
     
     @Autowired
     private StageManager stageManager;
@@ -86,19 +85,15 @@ public class EmpleadosController {
     
     @Autowired
     private EmpleadoService empleadoService;
-    
-    // =============================================
+
     // VARIABLES
-    // =============================================
     
     private int paginaActual = 0;
     private final int ITEMS_POR_PAGINA = 10;
     private EmpleadoDTO empleadoEditando = null;
     private String passwordTemporalGenerada = null;
 
-    // =============================================
     // INICIALIZACIÓN
-    // =============================================
     
     @FXML
     public void initialize() {
@@ -108,9 +103,7 @@ public class EmpleadosController {
         cargarEstadisticas();
     }
 
-    // =============================================
     // CONFIGURACIÓN DE TABLA
-    // =============================================
     
     private void configurarTabla() {
         // Columna EMPLEADO con avatar circular y nombre (NO centrada)
@@ -163,31 +156,31 @@ public class EmpleadosController {
             }
         });
         
-        // DNI - CENTRADO
+        // DNI
         dniColumn.setCellValueFactory(cellData -> 
             new SimpleStringProperty(cellData.getValue().getDni())
         );
         dniColumn.setStyle("-fx-alignment: CENTER;");
         
-        // EMAIL - CENTRADO
+        // EMAIL
         emailColumn.setCellValueFactory(cellData -> 
             new SimpleStringProperty(cellData.getValue().getEmail())
         );
         emailColumn.setStyle("-fx-alignment: CENTER;");
         
-        // USUARIO - CENTRADO
+        // USUARIO
         usuarioColumn.setCellValueFactory(cellData -> 
             new SimpleStringProperty(cellData.getValue().getUsuario())
         );
         usuarioColumn.setStyle("-fx-alignment: CENTER;");
         
-        // CARGO - CENTRADO
+        // CARGO
         cargoColumn.setCellValueFactory(cellData -> 
             new SimpleStringProperty(cellData.getValue().getCargo())
         );
         cargoColumn.setStyle("-fx-alignment: CENTER;");
         
-        // FECHA CONTRATACIÓN - CENTRADO
+        // FECHA CONTRATACIÓN
         fechaColumn.setCellValueFactory(cellData -> {
             if (cellData.getValue().getFechaContratacion() != null) {
                 return new SimpleStringProperty(
@@ -199,7 +192,7 @@ public class EmpleadosController {
         });
         fechaColumn.setStyle("-fx-alignment: CENTER;");
         
-        // ESTADO - CENTRADO con badge
+        // ESTADO
         estadoColumn.setCellValueFactory(cellData -> 
             new SimpleStringProperty(cellData.getValue().getEstadoTexto())
         );
@@ -225,7 +218,7 @@ public class EmpleadosController {
             }
         });
         
-        // ACCIONES - CENTRADO con botones de texto
+        // ACCIONES
         accionesColumn.setCellFactory(column -> new TableCell<EmpleadoDTO, Void>() {
             private final Button btnVer = crearBotonAccionTexto("VER", "#3498DB");
             private final Button btnEditar = crearBotonAccionTexto("EDIT", "#F39C12");
@@ -244,7 +237,7 @@ public class EmpleadosController {
                 
                 btnEliminar.setOnAction(e -> {
                     EmpleadoDTO empleado = getTableView().getItems().get(getIndex());
-                    desactivarEmpleado(empleado);
+                    eliminarEmpleado(empleado);
                 });
             }
             
@@ -323,30 +316,12 @@ public class EmpleadosController {
         int index = Math.abs(hash) % colores.length;
         return colores[index];
     }
-    
-    private Button crearBotonAccion(String texto, String color) {
-        // Método antiguo - ya no se usa, reemplazado por crearBotonAccionTexto
-        Button btn = new Button(texto);
-        btn.setStyle(
-            "-fx-background-color: " + color + ";" +
-            "-fx-text-fill: white;" +
-            "-fx-padding: 8 12 8 12;" +
-            "-fx-background-radius: 8px;" +
-            "-fx-cursor: hand;" +
-            "-fx-font-size: 14px;"
-        );
-        btn.setOnMouseEntered(e -> btn.setStyle(btn.getStyle() + "-fx-translate-y: -2px;"));
-        btn.setOnMouseExited(e -> btn.setStyle(btn.getStyle() + "-fx-translate-y: 0px;"));
-        return btn;
-    }
 
     private void configurarComboBoxes() {
         cargoCombo.getItems().addAll("Gerente", "Recepcionista", "Mantenimiento");
     }
 
-    // =============================================
     // CARGAR DATOS
-    // =============================================
     
     private void cargarEmpleados(int pagina) {
         try {
@@ -376,9 +351,7 @@ public class EmpleadosController {
         }
     }
 
-    // =============================================
     // PAGINACIÓN
-    // =============================================
     
     private void actualizarPaginacion(Page<EmpleadoDTO> page) {
         paginacionContainer.getChildren().clear();
@@ -415,19 +388,15 @@ public class EmpleadosController {
         paginacionContainer.getChildren().add(btnSiguiente);
     }
 
-    // =============================================
     // BÚSQUEDA
-    // =============================================
     
     @FXML
     private void buscarEmpleados() {
         cargarEmpleados(0);
     }
 
-    // =============================================
     // MODAL CREAR/EDITAR
-    // =============================================
-    
+
     @FXML
     private void abrirModalNuevo() {
         empleadoEditando = null;
@@ -435,6 +404,11 @@ public class EmpleadosController {
         modalFormTitle.setText("Nuevo Empleado");
         passwordContainer.setVisible(true);
         passwordContainer.setManaged(true);
+        
+        // Ocultar checkbox activo al crear (siempre será TRUE por defecto)
+        activoCheckBox.setVisible(false);
+        activoCheckBox.setManaged(false);
+        
         modalFormContainer.setVisible(true);
         modalFormContainer.setManaged(true);
     }
@@ -443,8 +417,15 @@ public class EmpleadosController {
         empleadoEditando = empleado;
         cargarDatosFormulario(empleado);
         modalFormTitle.setText("Editar Empleado");
+        
+        // Ocultar campo password al editar
         passwordContainer.setVisible(false);
         passwordContainer.setManaged(false);
+        
+        // Mostrar checkbox activo al editar
+        activoCheckBox.setVisible(true);
+        activoCheckBox.setManaged(true);
+        
         modalFormContainer.setVisible(true);
         modalFormContainer.setManaged(true);
     }
@@ -466,6 +447,9 @@ public class EmpleadosController {
         passwordField.clear();
         cargoCombo.setValue(null);
         salarioField.clear();
+        activoCheckBox.setSelected(true);
+        activoCheckBox.setVisible(false);
+        activoCheckBox.setManaged(false);
         errorFormLabel.setVisible(false);
         errorFormLabel.setManaged(false);
     }
@@ -481,20 +465,23 @@ public class EmpleadosController {
         if (empleado.getSalario() != null) {
             salarioField.setText(empleado.getSalario().toString());
         }
+
+        activoCheckBox.setSelected(Boolean.TRUE.equals(empleado.getActivo()));
+        activoCheckBox.setVisible(true);
+        activoCheckBox.setManaged(true);
+        
         errorFormLabel.setVisible(false);
         errorFormLabel.setManaged(false);
     }
 
-    // =============================================
     // GUARDAR EMPLEADO (CREAR/EDITAR)
-    // =============================================
     
     @FXML
     private void guardarEmpleado() {
         errorFormLabel.setVisible(false);
         errorFormLabel.setManaged(false);
         
-        // VALIDACIÓN 1: Campos obligatorios
+        // VALIDACIÓN Campos obligatorios
         if (!validarCamposObligatorios()) {
             return;
         }
@@ -504,31 +491,31 @@ public class EmpleadosController {
         String telefono = telefonoField.getText().trim();
         String usuario = usuarioField.getText().trim();
         
-        // VALIDACIÓN 2: Formato DNI
+        // VALIDACIÓN Formato DNI
         if (!dni.matches("^[0-9]{8}[A-Z]$")) {
             mostrarErrorForm("DNI inválido. Formato correcto: 12345678A");
             return;
         }
         
-        // VALIDACIÓN 3: Formato Email
+        // VALIDACIÓN Formato Email
         if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             mostrarErrorForm("Email inválido. Ejemplo: usuario@hotel.com");
             return;
         }
         
-        // VALIDACIÓN 4: Formato Teléfono
-        if (!telefono.matches("^[+]?[0-9\\s]{9,15}$")) {
-            mostrarErrorForm("Teléfono inválido. Ejemplo: +34 600 000 000");
+        // VALIDACIÓN Formato Teléfono (6 dígitos)
+        if (!telefono.matches("^[0-9]{9}$")) {
+            mostrarErrorForm("Teléfono inválido. Debe tener exactamente 9 dígitos");
             return;
         }
         
-        // VALIDACIÓN 5: Usuario sin espacios
+        // VALIDACIÓN Usuario sin espacios
         if (usuario.contains(" ")) {
             mostrarErrorForm("El usuario no puede contener espacios");
             return;
         }
         
-        // VALIDACIÓN 6: Salario numérico
+        // VALIDACIÓN Salario numérico
         BigDecimal salario = null;
         if (!salarioField.getText().trim().isEmpty()) {
             try {
@@ -575,7 +562,9 @@ public class EmpleadosController {
                 mostrarPasswordModal();
                 
             } else {
-                // EDITAR EXISTENTE
+                Boolean activo = activoCheckBox.isSelected();
+                dto.setActivo(activo);
+                
                 empleadoService.actualizarEmpleado(empleadoEditando.getIdEmpleado(), dto);
                 cerrarModalForm();
             }
@@ -609,9 +598,7 @@ public class EmpleadosController {
         errorFormLabel.setManaged(true);
     }
 
-    // =============================================
     // MODAL MOSTRAR PASSWORD
-    // =============================================
     
     private void mostrarPasswordModal() {
         passwordMostradaLabel.setText(passwordTemporalGenerada);
@@ -626,9 +613,7 @@ public class EmpleadosController {
         passwordTemporalGenerada = null;
     }
 
-    // =============================================
     // VER DETALLES
-    // =============================================
     
     private void verDetalleEmpleado(EmpleadoDTO empleado) {
         detallesNombreLabel.setText(empleado.getNombreCompleto());
@@ -651,30 +636,26 @@ public class EmpleadosController {
         modalDetallesContainer.setManaged(false);
     }
 
-    // =============================================
-    // DESACTIVAR/ELIMINAR EMPLEADO
-    // =============================================
+    // ELIMINAR EMPLEADO
     
-    private void desactivarEmpleado(EmpleadoDTO empleado) {
+    private void eliminarEmpleado(EmpleadoDTO empleado) {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar acción");
-        confirmacion.setHeaderText("¿Desactivar empleado " + empleado.getNombreCompleto() + "?");
-        confirmacion.setContentText("El empleado será marcado como inactivo pero no se eliminará de la base de datos");
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText("¿Eliminar empleado " + empleado.getNombreCompleto() + "?");
+        confirmacion.setContentText("Esta acción eliminará permanentemente el empleado de la base de datos");
         
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             try {
-                empleadoService.cambiarEstado(empleado.getIdEmpleado(), false);
+                empleadoService.eliminarEmpleado(empleado.getIdEmpleado());
                 cargarEmpleados(paginaActual);
                 cargarEstadisticas();
             } catch (Exception e) {
-                mostrarError("Error al desactivar empleado", e.getMessage());
+                mostrarError("Error al eliminar empleado", e.getMessage());
             }
         }
     }
 
-    // =============================================
     // NAVEGACIÓN
-    // =============================================
     
     @FXML
     private void navegarDashboard() {
@@ -692,9 +673,7 @@ public class EmpleadosController {
         stageManager.switchScene(FxmlView.LOGIN);
     }
 
-    // =============================================
     // UTILIDADES
-    // =============================================
     
     private void mostrarError(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
