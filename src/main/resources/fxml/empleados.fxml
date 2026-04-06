@@ -362,7 +362,7 @@
     <!-- MODAL MOSTRAR CONTRASEÑA (Solo al crear) -->
     <StackPane fx:id="modalPasswordContainer" visible="false" managed="false"
                alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.7);">
-        <VBox styleClass="modal-content" maxWidth="500" spacing="20" style="-fx-padding: 30;">
+        <VBox styleClass="modal-content" maxWidth="500" maxHeight="400" spacing="20" style="-fx-padding: 30; -fx-max-height: 400px;">
             <VBox spacing="15" alignment="CENTER">
                 <Label text="✅" style="-fx-font-size: 48px;"/>
                 <Label text="Empleado Creado Correctamente" styleClass="modal-title" wrapText="true" alignment="CENTER">

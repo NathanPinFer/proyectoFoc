@@ -38,6 +38,11 @@
                 <PasswordField fx:id="passwordField" promptText="Ingresa tu contraseña" styleClass="text-field"/>
             </VBox>
 
+            <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 5 0 5 0;">
+                <CheckBox fx:id="recordarmeCheckBox" text="Recordarme"
+                          style="-fx-text-fill: #2C3E50; -fx-font-size: 14px;"/>
+            </HBox>
+
             <Label fx:id="errorLabel" styleClass="error-label" visible="false" wrapText="true" textAlignment="CENTER"/>
 
             <Button text="Iniciar Sesión" onAction="#handleLogin" styleClass="btn-login" maxWidth="Infinity"/>

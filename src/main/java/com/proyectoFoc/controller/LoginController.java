@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -15,6 +16,8 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import java.util.prefs.Preferences;
 
 @Component
 public class LoginController {
@@ -27,6 +30,9 @@ public class LoginController {
 
     @FXML
     private Label errorLabel;
+    
+    @FXML
+    private CheckBox recordarmeCheckBox;
 
     @Autowired
     private StageManager stageManager;
@@ -36,6 +42,33 @@ public class LoginController {
     
     @Autowired
     private ApplicationContext applicationContext;
+    
+    // Preferences para guardar credenciales
+    private static final String PREFS_NODE = "HotelManagement";
+    private static final String PREF_USUARIO = "usuario";
+    private static final String PREF_PASSWORD = "password";
+    private static final String PREF_RECORDAR = "recordar";
+    
+    private Preferences prefs = Preferences.userRoot().node(PREFS_NODE);
+
+    @FXML
+    public void initialize() {
+        // Cargar credenciales guardadas si existen
+        cargarCredencialesGuardadas();
+        
+        // Permitir login con tecla Enter en cualquier campo
+        usuarioField.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                handleLogin();
+            }
+        });
+
+        passwordField.setOnKeyPressed(event -> {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+                handleLogin();
+            }
+        });
+    }
 
     @FXML
     private void handleLogin() {
@@ -59,6 +92,13 @@ public class LoginController {
             // Login exitoso
             System.out.println("Login exitoso: " + authService.getEmpleadoActual().getNombre() + 
                              " - " + authService.getEmpleadoActual().getCargo());
+
+            // Guardar credenciales si "Recordarme" está marcado
+            if (recordarmeCheckBox.isSelected()) {
+                guardarCredenciales(usuario, password);
+            } else {
+                limpiarCredencialesGuardadas();
+            }
 
             // VERIFICAR SI DEBE CAMBIAR CONTRASEÑA
             if (authService.debeCambiarPassword()) {
@@ -119,25 +159,45 @@ public class LoginController {
             mostrarError("Error al cargar el formulario de cambio de contraseña");
         }
     }
+    
+    /**
+     * Guardar credenciales en Preferences
+     */
+    private void guardarCredenciales(String usuario, String password) {
+        prefs.put(PREF_USUARIO, usuario);
+        prefs.put(PREF_PASSWORD, password);
+        prefs.putBoolean(PREF_RECORDAR, true);
+    }
+    
+    /**
+     * Cargar credenciales guardadas si existen
+     */
+    private void cargarCredencialesGuardadas() {
+        boolean recordar = prefs.getBoolean(PREF_RECORDAR, false);
+        
+        if (recordar) {
+            String usuario = prefs.get(PREF_USUARIO, "");
+            String password = prefs.get(PREF_PASSWORD, "");
+            
+            if (!usuario.isEmpty() && !password.isEmpty()) {
+                usuarioField.setText(usuario);
+                passwordField.setText(password);
+                recordarmeCheckBox.setSelected(true);
+            }
+        }
+    }
+    
+    /**
+     * Limpiar credenciales guardadas
+     */
+    private void limpiarCredencialesGuardadas() {
+        prefs.remove(PREF_USUARIO);
+        prefs.remove(PREF_PASSWORD);
+        prefs.putBoolean(PREF_RECORDAR, false);
+    }
 
     private void mostrarError(String mensaje) {
         errorLabel.setText(mensaje);
         errorLabel.setVisible(true);
-    }
-
-    @FXML
-    public void initialize() {
-        // Permitir login con tecla Enter en cualquier campo
-        usuarioField.setOnKeyPressed(event -> {
-            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
-                handleLogin();
-            }
-        });
-
-        passwordField.setOnKeyPressed(event -> {
-            if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
-                handleLogin();
-            }
-        });
     }
 }

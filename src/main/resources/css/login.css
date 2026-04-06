@@ -106,3 +106,26 @@
     -fx-font-size: 11px;
     -fx-text-fill: #BDC3C7;
 }
+
+/* CHECKBOX */
+.check-box {
+    -fx-text-fill: #2C3E50;
+    -fx-font-size: 14px;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #ECF0F1;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #3498DB;
+}
+
+.check-box:selected .box {
+    -fx-border-color: #3498DB;
+    -fx-background-color: white;
+}
