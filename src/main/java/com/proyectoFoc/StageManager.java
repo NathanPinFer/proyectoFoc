@@ -62,6 +62,7 @@ public class StageManager {
             case CLIENTES -> "/css/clientes.css";
             case EMPLEADOS -> "/css/empleados.css";
             case RESERVAS -> "/css/reservas.css";
+            case HABITACIONES -> "/css/habitaciones.css";
         };
     }
 }

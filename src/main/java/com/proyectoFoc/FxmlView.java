@@ -8,7 +8,8 @@ public enum FxmlView {
     DASHBOARD("/fxml/dashboard.fxml", "Dashboard - Hotel Management"),
     CLIENTES("/fxml/clientes.fxml", "Clientes - Hotel Management"),
     EMPLEADOS("/fxml/empleados.fxml", "Empleados - Hotel Management"),
-    RESERVAS("/fxml/reservas.fxml", "Reservas - Hotel Management");
+    RESERVAS("/fxml/reservas.fxml", "Reservas - Hotel Management"),
+    HABITACIONES("/fxml/habitaciones.fxml", "Habitaciones - Hotel Management");
 
 
     private final String fxmlFile;

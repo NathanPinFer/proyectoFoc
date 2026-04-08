@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.proyectoFoc.controller.HabitacionController">
+
+    <BorderPane styleClass="main-container">
+        <left>
+            <VBox styleClass="sidebar" prefWidth="260">
+                <VBox styleClass="logo" alignment="CENTER" spacing="10">
+                    <Label text="🏨" style="-fx-font-size: 48px;"/>
+                    <Label text="Hotel Manager" styleClass="logo-text">
+                        <font>
+                            <Font name="System Bold" size="24"/>
+                        </font>
+                    </Label>
+                </VBox>
+
+                <VBox styleClass="menu" spacing="5" VBox.vgrow="ALWAYS">
+                    <Button styleClass="menu-item" onAction="#volverDashboard">
+                        <graphic>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="📊" style="-fx-font-size: 22px;"/>
+                                <Label text="Dashboard"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+
+                    <Button styleClass="menu-item" onAction="#navegarReservas">
+                        <graphic>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="📅" style="-fx-font-size: 22px;"/>
+                                <Label text="Reservas"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+
+                    <Button styleClass="menu-item" onAction="#navegarClientes">
+                        <graphic>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="👥" style="-fx-font-size: 22px;"/>
+                                <Label text="Clientes"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+
+                    <Button styleClass="menu-item, active">
+                        <graphic>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="🛏️" style="-fx-font-size: 22px;"/>
+                                <Label text="Habitaciones"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+
+
+                    <Button fx:id="btnEmpleados" styleClass="menu-item" onAction="#navegarEmpleados">
+                        <graphic>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="👔" style="-fx-font-size: 22px;"/>
+                                <Label text="Empleados"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+
+                    <Region VBox.vgrow="ALWAYS"/>
+
+                    <Button styleClass="menu-item" onAction="#cerrarSesion">
+                        <graphic>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <Label text="🚪" style="-fx-font-size: 22px;"/>
+                                <Label text="Cerrar Sesión"/>
+                            </HBox>
+                        </graphic>
+                    </Button>
+                </VBox>
+            </VBox>
+        </left>
+
+        <center>
+            <VBox styleClass="main-content" spacing="20">
+                <padding>
+                    <Insets top="30" right="30" bottom="30" left="30"/>
+                </padding>
+
+                <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="20">
+                    <Label text="Gestión de Habitaciones" styleClass="topbar-title">
+                        <font>
+                            <Font name="System Bold" size="28"/>
+                        </font>
+                    </Label>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="Nueva Habitación" styleClass="btn-primary" onAction="#abrirModalNuevaHabitacion"/>
+                </HBox>
+
+                <VBox styleClass="filter-panel" spacing="15">
+                    <Label text="Filtrar por estado" styleClass="filter-title"/>
+                    <FlowPane hgap="12" vgap="12">
+                        <Button fx:id="btnFiltroTodas" text="Todas (0)" styleClass="filter-chip" onAction="#filtrarTodas">
+                        </Button>
+                        <Button fx:id="btnFiltroDisponibles" text="Disponibles (0)" styleClass="filter-chip" onAction="#filtrarDisponibles">
+                        </Button>
+                        <Button fx:id="btnFiltroOcupadas" text="Ocupadas (0)" styleClass="filter-chip" onAction="#filtrarOcupadas">
+                        </Button>
+                        <Button fx:id="btnFiltroLimpieza" text="Limpieza (0)" styleClass="filter-chip" onAction="#filtrarLimpieza">
+                        </Button>
+                        <Button fx:id="btnFiltroMantenimiento" text="Mantenimiento (0)" styleClass="filter-chip" onAction="#filtrarMantenimiento">
+                        </Button>
+                    </FlowPane>
+                </VBox>
+
+                <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+                    <content>
+                        <FlowPane fx:id="habitacionesContainer" hgap="18" vgap="18" prefWrapLength="1200">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+            </VBox>
+        </center>
+    </BorderPane>
+    <!-- MODAL NUEVA / EDITAR HABITACIÓN -->
+    <StackPane fx:id="modalHabitacionContainer"
+               visible="false"
+               managed="false"
+               style="-fx-background-color: rgba(0,0,0,0.6);">
+
+        <VBox styleClass="modal-content" maxWidth="700" spacing="20">
+            <HBox styleClass="modal-header" alignment="CENTER_LEFT">
+                <Label fx:id="modalHabitacionTitle" text="Nueva Habitación" styleClass="modal-title">
+                    <font>
+                        <Font name="System Bold" size="24"/>
+                    </font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="×" styleClass="btn-close" onAction="#cerrarModalHabitacion">
+                    <font>
+                        <Font size="28"/>
+                    </font>
+                </Button>
+            </HBox>
+
+            <ScrollPane fitToWidth="true" style="-fx-background-color: white; -fx-background: white;">
+                <VBox spacing="20">
+                    <padding>
+                        <Insets top="25" right="25" bottom="25" left="25"/>
+                    </padding>
+
+                    <GridPane hgap="15" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+
+                        <VBox spacing="8" GridPane.columnIndex="0">
+                            <Label text="Número de habitación *" styleClass="form-label"/>
+                            <TextField fx:id="numeroHabitacionField" promptText="101" styleClass="form-input"/>
+                        </VBox>
+
+                        <VBox spacing="8" GridPane.columnIndex="1">
+                            <Label text="Piso *" styleClass="form-label"/>
+                            <TextField fx:id="pisoField" promptText="1" styleClass="form-input"/>
+                        </VBox>
+                    </GridPane>
+
+                    <VBox spacing="8">
+                        <VBox spacing="8">
+                            <Label text="Tipo de habitación *" styleClass="form-label"/>
+                            <ComboBox fx:id="tipoHabitacionCombo" styleClass="form-input" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <VBox spacing="8">
+                            <Label text="Precio por noche *" styleClass="form-label"/>
+                            <TextField fx:id="precioField" promptText="150" styleClass="form-input"/>
+                        </VBox>
+
+                        <GridPane hgap="15" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+
+                            <VBox spacing="8" GridPane.columnIndex="0">
+                                <Label text="Estado *" styleClass="form-label"/>
+                                <ComboBox fx:id="estadoHabitacionCombo" styleClass="form-input" maxWidth="Infinity"/>
+                            </VBox>
+
+                            <VBox spacing="8" GridPane.columnIndex="1">
+                                <Label text="Accesible" styleClass="form-label"/>
+                                <CheckBox fx:id="accesibleCheckBox" text="Habitación accesible" styleClass="checkbox-vip"/>
+                            </VBox>
+                        </GridPane>
+
+                        <Label fx:id="errorHabitacionLabel" styleClass="error-label" visible="false" wrapText="true"/>
+
+                        <HBox spacing="15" alignment="CENTER_RIGHT">
+                            <Button text="Cancelar" styleClass="btn-secondary" onAction="#cerrarModalHabitacion" prefWidth="120"/>
+                            <Button text="Guardar" styleClass="btn-submit" onAction="#guardarHabitacion" prefWidth="120"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </StackPane>
+        <!-- MODAL DETALLE HABITACIÓN -->
+    <StackPane fx:id="modalDetalleHabitacionContainer"
+               visible="false"
+               managed="false"
+               alignment="CENTER"
+               style="-fx-background-color: rgba(0,0,0,0.6);">
+
+        <VBox styleClass="modal-content" maxWidth="600" spacing="20"
+              style="-fx-max-height: 80vh;">
+            <HBox styleClass="modal-header" alignment="CENTER_LEFT">
+                <Label text="Detalle de Habitación" styleClass="modal-title">
+                    <font><Font name="System Bold" size="24"/></font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="×" styleClass="btn-close" onAction="#cerrarModalDetalleHabitacion">
+                    <font><Font size="28"/></font>
+                </Button>
+            </HBox>
+
+            <ScrollPane fitToWidth="true" fitToHeight="true"
+                       style="-fx-background-color: white; -fx-background: white;">
+                <VBox spacing="20" style="-fx-background-color: white; -fx-padding: 25;">
+
+                    <GridPane hgap="20" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="40"/>
+                            <ColumnConstraints percentWidth="60"/>
+                        </columnConstraints>
+
+                        <Label text="Número de habitación:" styleClass="detalle-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label fx:id="detalleNumeroHabitacionLabel" styleClass="detalle-valor" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                        <Label text="Planta:" styleClass="detalle-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <Label fx:id="detallePisoHabitacionLabel" styleClass="detalle-valor" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                        <Label text="Tipo:" styleClass="detalle-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <Label fx:id="detalleTipoHabitacionLabel" styleClass="detalle-valor" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                        <Label text="Capacidad:" styleClass="detalle-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <Label fx:id="detalleCapacidadHabitacionLabel" styleClass="detalle-valor" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                        <Label text="Número de camas:" styleClass="detalle-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <Label fx:id="detalleCamasHabitacionLabel" styleClass="detalle-valor" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                        <Label text="Precio por noche:" styleClass="detalle-label" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <Label fx:id="detallePrecioHabitacionLabel" styleClass="detalle-valor" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                    </GridPane>
+
+                    <HBox alignment="CENTER">
+                        <Button text="Cerrar" styleClass="btn-primary" onAction="#cerrarModalDetalleHabitacion" prefWidth="150"/>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </StackPane>
+</StackPane>

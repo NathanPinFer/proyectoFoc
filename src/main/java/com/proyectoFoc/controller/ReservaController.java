@@ -623,6 +623,10 @@ public class ReservaController {
     @FXML private void navegarDashboard() { stageManager.switchScene(FxmlView.DASHBOARD); }
     @FXML private void navegarClientes()  { stageManager.switchScene(FxmlView.CLIENTES);  }
     @FXML private void navegarEmpleados()  { stageManager.switchScene(FxmlView.EMPLEADOS);  }
+    @FXML
+    private void navegarHabitaciones() {
+        stageManager.switchScene(FxmlView.HABITACIONES);
+    }
 
     @FXML
     private void cerrarSesion() {

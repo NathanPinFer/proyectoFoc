@@ -1,7 +1,9 @@
 package com.proyectoFoc.service;
 
 import com.proyectoFoc.entity.Habitacion;
+import com.proyectoFoc.entity.TipoHabitacion;
 import com.proyectoFoc.repository.HabitacionRepository;
+import com.proyectoFoc.repository.TipoHabitacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,20 @@ public class HabitacionService {
 
     @Autowired
     private HabitacionRepository habitacionRepository;
+    @Autowired
+    private TipoHabitacionRepository tipoHabitacionRepository;
+
+    /**
+     * Buscar tipo de habitación por nombre
+     */
+    public Optional<TipoHabitacion> obtenerTipoPorNombre(String nombre) {
+        return tipoHabitacionRepository.findByNombre(nombre);
+    }
+
+    @Transactional
+    public TipoHabitacion guardarTipoHabitacion(TipoHabitacion tipo) {
+        return tipoHabitacionRepository.save(tipo);
+    }
 
     /**
      * Obtener todas las habitaciones ordenadas

@@ -51,7 +51,7 @@
                         </graphic>
                     </Button>
 
-                    <Button styleClass="menu-item" >
+                    <Button styleClass="menu-item" onAction="#navegarHabitaciones">
                         <graphic>
                             <HBox spacing="15" alignment="CENTER_LEFT">
                                 <Label text="🛏️" style="-fx-font-size: 22px;" />
