@@ -666,6 +666,11 @@ public class EmpleadosController {
     private void navegarClientes() {
         stageManager.switchScene(FxmlView.CLIENTES);
     }
+
+    @FXML
+    private void navegarReservas() {
+        stageManager.switchScene(FxmlView.RESERVAS);
+    }
     
     @FXML
     private void cerrarSesion() {

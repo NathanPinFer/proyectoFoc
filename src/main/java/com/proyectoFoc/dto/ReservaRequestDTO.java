@@ -13,4 +13,6 @@ public class ReservaRequestDTO {
     private LocalDate fechaSalida;
     private BigDecimal precioNoche;
     private String observaciones;
+    private Integer numAdultos;
+    private Integer numNinos;
 }

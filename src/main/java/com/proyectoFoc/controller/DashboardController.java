@@ -123,6 +123,11 @@ public class DashboardController {
     }
 
     @FXML
+    private void navegarReservas() {
+        stageManager.switchScene(FxmlView.RESERVAS);
+    }
+
+    @FXML
     private void cerrarSesion() {
         authService.logout();
         stageManager.switchScene(FxmlView.LOGIN);

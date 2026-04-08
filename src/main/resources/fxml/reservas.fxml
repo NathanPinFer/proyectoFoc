@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.openjfx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.proyectoFoc.controller.ReservaController"
+            styleClass="main-container">
+
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="260">
+            <!-- Logo -->
+            <VBox styleClass="logo" alignment="CENTER" spacing="10">
+                <Label text="🏨" style="-fx-font-size: 48px;"/>
+                <Label text="Hotel Manager" styleClass="logo-text">
+                    <font><Font name="System Bold" size="24"/></font>
+                </Label>
+            </VBox>
+
+            <!-- Menú de navegación -->
+            <VBox styleClass="menu" spacing="5" VBox.vgrow="ALWAYS">
+                <Button styleClass="menu-item" onAction="#navegarDashboard">
+                    <graphic>
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="📊" style="-fx-font-size: 22px;"/>
+                            <Label text="Dashboard"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button styleClass="menu-item, active">
+                    <graphic>
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="📅" style="-fx-font-size: 22px;"/>
+                            <Label text="Reservas"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button styleClass="menu-item" onAction="#navegarClientes">
+                    <graphic>
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="👥" style="-fx-font-size: 22px;"/>
+                            <Label text="Clientes"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button styleClass="menu-item">
+                    <graphic>
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="🛏️" style="-fx-font-size: 22px;"/>
+                            <Label text="Habitaciones"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button styleClass="menu-item" onAction="#navegarEmpleados">
+                    <graphic>
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="👔" style="-fx-font-size: 22px;"/>
+                            <Label text="Empleados"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <Button styleClass="menu-item" onAction="#cerrarSesion">
+                    <graphic>
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="🚪" style="-fx-font-size: 22px;"/>
+                            <Label text="Cerrar Sesión"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <center>
+        <StackPane>
+
+            <!-- Scroll principal -->
+            <ScrollPane fitToWidth="true" styleClass="scroll-clean"
+                        style="-fx-background-color: #F5F7FA; -fx-background: #F5F7FA;">
+                <VBox styleClass="main-content" spacing="16"
+                      style="-fx-padding: 26 26 26 26; -fx-background-color: #F5F7FA;">
+
+                    <!-- TOP BAR -->
+                    <HBox styleClass="topbar" alignment="CENTER_LEFT">
+                        <Label text="Gestión de Reservas" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
+                        <Button text="＋  Nueva Reserva" styleClass="btn-primary" onAction="#abrirModalNueva"/>
+                    </HBox>
+
+                    <!-- ESTADÍSTICAS -->
+                    <GridPane hgap="14" vgap="0">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                            <ColumnConstraints percentWidth="25"/>
+                        </columnConstraints>
+
+                        <VBox styleClass="stat-mini" GridPane.columnIndex="0" alignment="CENTER" spacing="5">
+                            <Label text="RESERVAS ACTIVAS" styleClass="stat-mini-label"/>
+                            <Label fx:id="lblTotalActivas" text="0" styleClass="stat-mini-value"
+                                   style="-fx-text-fill: #3498DB;"/>
+                        </VBox>
+                        <VBox styleClass="stat-mini" GridPane.columnIndex="1" alignment="CENTER" spacing="5">
+                            <Label text="CONFIRMADAS" styleClass="stat-mini-label"/>
+                            <Label fx:id="lblConfirmadas" text="0" styleClass="stat-mini-value"
+                                   style="-fx-text-fill: #27AE60;"/>
+                        </VBox>
+                        <VBox styleClass="stat-mini" GridPane.columnIndex="2" alignment="CENTER" spacing="5">
+                            <Label text="PENDIENTES" styleClass="stat-mini-label"/>
+                            <Label fx:id="lblPendientes" text="0" styleClass="stat-mini-value"
+                                   style="-fx-text-fill: #F39C12;"/>
+                        </VBox>
+                        <VBox styleClass="stat-mini" GridPane.columnIndex="3" alignment="CENTER" spacing="5">
+                            <Label text="CHECK-IN HOY" styleClass="stat-mini-label"/>
+                            <Label fx:id="lblCheckinHoy" text="0" styleClass="stat-mini-value"
+                                   style="-fx-text-fill: #9B59B6;"/>
+                        </VBox>
+                    </GridPane>
+
+                    <!-- BARRA FILTROS -->
+                    <HBox styleClass="search-bar" spacing="12" alignment="CENTER_LEFT">
+                        <TextField fx:id="txtBuscarCliente"
+                                   promptText="Nombre o DNI del cliente"
+                                   styleClass="search-input" prefWidth="230"
+                                   onAction="#buscarReservas"/>
+                        <DatePicker fx:id="dpFechaEntrada"
+                                    promptText="Fecha entrada"
+                                    prefWidth="180"/>
+                        <ComboBox fx:id="cmbEstado" prefWidth="150"/>
+                        <Button text="Buscar" styleClass="btn-search" onAction="#buscarReservas"/>
+                    </HBox>
+
+                    <!-- LISTADO -->
+                    <VBox fx:id="listaReservasContainer" spacing="0"/>
+
+                    <!-- PAGINACIÓN -->
+                    <HBox fx:id="paginacionContainer" alignment="CENTER" spacing="8"
+                          style="-fx-padding: 4 0 4 0;"/>
+
+                </VBox>
+            </ScrollPane>
+
+
+            <!-- EDITAR RESERVA -->
+
+            <StackPane fx:id="modalFormContainer" styleClass="modal-overlay"
+                       visible="false" managed="false" alignment="CENTER">
+                <VBox styleClass="modal-content" maxWidth="650"
+                      style="-fx-max-height: 750px;">
+
+                    <!-- Cabecera -->
+                    <HBox styleClass="modal-header" alignment="CENTER_LEFT">
+                        <Label fx:id="lblModalTitulo" text="Nueva Reserva"
+                               styleClass="modal-title" HBox.hgrow="ALWAYS"/>
+                        <Button text="✕" styleClass="btn-close" onAction="#cerrarModalForm"/>
+                    </HBox>
+
+                    <!-- Cuerpo -->
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                style="-fx-background-color: white; -fx-background: white;
+                                       -fx-border-color: transparent;">
+                        <VBox spacing="14" style="-fx-padding: 20 24 20 24; -fx-background-color: white;">
+
+                            <Label text="FECHAS" styleClass="form-section-label"/>
+                            <GridPane hgap="14" vgap="6">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="50"/>
+                                    <ColumnConstraints percentWidth="50"/>
+                                </columnConstraints>
+                                <VBox GridPane.columnIndex="0" spacing="4">
+                                    <Label text="Fecha entrada *" styleClass="form-label"/>
+                                    <DatePicker fx:id="dpFormEntrada" maxWidth="Infinity"/>
+                                </VBox>
+                                <VBox GridPane.columnIndex="1" spacing="4">
+                                    <Label text="Fecha salida *" styleClass="form-label"/>
+                                    <DatePicker fx:id="dpFormSalida" maxWidth="Infinity"/>
+                                </VBox>
+                            </GridPane>
+
+                            <Label text="HABITACIÓN" styleClass="form-section-label"/>
+                            <VBox spacing="4">
+                                <Label text="Selecciona habitación *" styleClass="form-label"/>
+                                <ComboBox fx:id="cmbFormHabitacion" maxWidth="Infinity"
+                                          promptText="Elige una habitación..."/>
+                                <HBox spacing="16" alignment="CENTER_LEFT">
+                                    <Label fx:id="lblFormPrecioNoche" text="0.00 €/noche"
+                                           style="-fx-text-fill: #7F8C8D; -fx-font-size: 13px;"/>
+                                    <Label fx:id="lblFormTotal" text="Total: 0.00 €"
+                                           style="-fx-text-fill: #27AE60; -fx-font-size: 14px;
+                                                  -fx-font-weight: bold;"/>
+                                </HBox>
+                            </VBox>
+
+                            <Label text="HUÉSPED" styleClass="form-section-label"/>
+                            <VBox spacing="4">
+                                <Label text="Buscar cliente *" styleClass="form-label"/>
+                                <TextField fx:id="txtFormBuscarCliente"
+                                           promptText="Nombre, apellidos o DNI..."
+                                           styleClass="search-input" maxWidth="Infinity"/>
+                                <ListView fx:id="listFormClientes" prefHeight="90"
+                                          visible="false" managed="false"/>
+                                <Label fx:id="lblFormClienteSeleccionado"
+                                       text="(ningún cliente seleccionado)"
+                                       style="-fx-text-fill: #95A5A6; -fx-font-style: italic;
+                                              -fx-font-size: 13px;"/>
+                            </VBox>
+
+                            <Label text="NÚMERO DE HUÉSPEDES" styleClass="form-section-label"/>
+                            <GridPane hgap="14" vgap="6">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="50"/>
+                                    <ColumnConstraints percentWidth="50"/>
+                                </columnConstraints>
+                                <VBox GridPane.columnIndex="0" spacing="4">
+                                    <Label text="Adultos" styleClass="form-label"/>
+                                    <Spinner fx:id="spnAdultos" maxWidth="Infinity"/>
+                                </VBox>
+                                <VBox GridPane.columnIndex="1" spacing="4">
+                                    <Label text="Niños" styleClass="form-label"/>
+                                    <Spinner fx:id="spnNinos" maxWidth="Infinity"/>
+                                </VBox>
+                            </GridPane>
+
+                            <Label text="OBSERVACIONES" styleClass="form-section-label"/>
+                            <TextArea fx:id="txtFormObservaciones" prefRowCount="3"
+                                      promptText="Notas adicionales..." wrapText="true"
+                                      maxWidth="Infinity"/>
+
+                            <Label fx:id="lblFormError" text=""
+                                   styleClass="error-label"
+                                   visible="false" managed="false" wrapText="true"/>
+                        </VBox>
+                    </ScrollPane>
+
+                    <!-- Pie -->
+                    <HBox styleClass="modal-footer" alignment="CENTER_RIGHT" spacing="12">
+                        <Button text="Cancelar"        styleClass="btn-secondary" onAction="#cerrarModalForm"/>
+                        <Button text="Guardar Reserva" styleClass="btn-submit"    onAction="#guardarReserva"/>
+                    </HBox>
+                </VBox>
+            </StackPane>
+
+            <!-- VER DETALLES -->
+            <StackPane fx:id="modalDetallesContainer" styleClass="modal-overlay"
+                       visible="false" managed="false" alignment="CENTER">
+                <VBox styleClass="modal-content" maxWidth="460"
+                      style="-fx-max-height: 450px;">
+
+                    <HBox styleClass="modal-header" alignment="CENTER_LEFT">
+                        <Label fx:id="lblDetId" text="Reserva #RES-0"
+                               styleClass="modal-title" HBox.hgrow="ALWAYS"/>
+                        <Button text="✕" styleClass="btn-close" onAction="#cerrarModalDetalles"/>
+                    </HBox>
+
+                    <VBox spacing="12" style="-fx-padding: 20 24 20 24;">
+
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="Estado:" style="-fx-text-fill: #7F8C8D; -fx-font-size: 13px;"/>
+                            <Label fx:id="lblDetEstado" text="CONFIRMADA"
+                                   style="-fx-background-color: #27AE60; -fx-text-fill: white;
+                                          -fx-padding: 4 12 4 12; -fx-background-radius: 20;
+                                          -fx-font-size: 11px; -fx-font-weight: bold;"/>
+                        </HBox>
+
+                        <Separator/>
+
+                        <GridPane hgap="16" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints prefWidth="130"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Cliente:"        style="-fx-text-fill:#7F8C8D; -fx-font-size:13px;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDetCliente"  text="-" style="-fx-font-weight:bold; -fx-font-size:14px;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label fx:id="lblDetVip" text="" style="-fx-text-fill:#F39C12; -fx-font-weight:bold;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Habitación:"     style="-fx-text-fill:#7F8C8D; -fx-font-size:13px;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDetHabitacion" text="-" style="-fx-font-weight:bold; -fx-font-size:14px;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Fecha entrada:"  style="-fx-text-fill:#7F8C8D; -fx-font-size:13px;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDetFechaEntrada" text="-" style="-fx-font-weight:bold; -fx-font-size:14px;" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                            <Label text="Fecha salida:"   style="-fx-text-fill:#7F8C8D; -fx-font-size:13px;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDetFechaSalida" text="-" style="-fx-font-weight:bold; -fx-font-size:14px;" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                            <Label text="Huéspedes:"      style="-fx-text-fill:#7F8C8D; -fx-font-size:13px;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDetHuespedes" text="-" style="-fx-font-weight:bold; -fx-font-size:14px;" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                            <Label text="Importe total:"  style="-fx-text-fill:#7F8C8D; -fx-font-size:13px;" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                            <Label fx:id="lblDetImporte"  text="-"
+                                   style="-fx-font-weight:bold; -fx-font-size:16px; -fx-text-fill:#27AE60;"
+                                   GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                        </GridPane>
+                    </VBox>
+
+                    <HBox styleClass="modal-footer" alignment="CENTER_RIGHT">
+                        <Button text="Cerrar" styleClass="btn-secondary" onAction="#cerrarModalDetalles"/>
+                    </HBox>
+                </VBox>
+            </StackPane>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

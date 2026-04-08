@@ -61,6 +61,7 @@ public class StageManager {
             case DASHBOARD -> "/css/dashboard.css";
             case CLIENTES -> "/css/clientes.css";
             case EMPLEADOS -> "/css/empleados.css";
+            case RESERVAS -> "/css/reservas.css";
         };
     }
 }
