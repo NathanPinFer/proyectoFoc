@@ -132,7 +132,7 @@
                managed="false"
                style="-fx-background-color: rgba(0,0,0,0.6);">
 
-        <VBox styleClass="modal-content" maxWidth="700" spacing="20">
+        <VBox styleClass="modal-content" maxWidth="700" maxHeight="700" spacing="20">
             <HBox styleClass="modal-header" alignment="CENTER_LEFT">
                 <Label fx:id="modalHabitacionTitle" text="Nueva Habitación" styleClass="modal-title">
                     <font>
@@ -209,7 +209,7 @@
             </ScrollPane>
         </VBox>
     </StackPane>
-        <!-- MODAL DETALLE HABITACIÓN -->
+        <!-- DETALLE HABITACIÓN -->
     <StackPane fx:id="modalDetalleHabitacionContainer"
                visible="false"
                managed="false"
@@ -217,7 +217,7 @@
                style="-fx-background-color: rgba(0,0,0,0.6);">
 
         <VBox styleClass="modal-content" maxWidth="600" spacing="20"
-              style="-fx-max-height: 80vh;">
+              style="-fx-max-height: 450px;">
             <HBox styleClass="modal-header" alignment="CENTER_LEFT">
                 <Label text="Detalle de Habitación" styleClass="modal-title">
                     <font><Font name="System Bold" size="24"/></font>
