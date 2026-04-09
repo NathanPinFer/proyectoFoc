@@ -9,10 +9,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CambiarPasswordController {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @FXML
     private PasswordField passwordActualField;
@@ -56,53 +60,53 @@ public class CambiarPasswordController {
     private void cambiarPassword() {
         errorLabel.setVisible(false);
         errorLabel.setManaged(false);
-        
+
         String passwordActual = passwordActualField.getText();
         String passwordNueva = passwordNuevaField.getText();
         String passwordConfirmar = passwordConfirmarField.getText();
-        
+
         // VALIDACIÓN 1: Campos vacíos
         if (passwordActual.isEmpty() || passwordNueva.isEmpty() || passwordConfirmar.isEmpty()) {
             mostrarError("Todos los campos son obligatorios");
             return;
         }
-        
+
         // VALIDACIÓN 2: Contraseña actual correcta
-        if (!passwordActual.equals(empleado.getPassword())) {
+        if (!passwordEncoder.matches(passwordActual, empleado.getPassword())) {
             mostrarError("La contraseña actual no es correcta");
             return;
         }
-        
+
         // VALIDACIÓN 3: Nueva contraseña longitud mínima
         if (passwordNueva.length() < 6) {
             mostrarError("La nueva contraseña debe tener al menos 6 caracteres");
             return;
         }
-        
+
         // VALIDACIÓN 4: Contraseñas coinciden
         if (!passwordNueva.equals(passwordConfirmar)) {
             mostrarError("Las contraseñas nuevas no coinciden");
             return;
         }
-        
+
         // VALIDACIÓN 5: Nueva contraseña diferente a la actual
-        if (passwordNueva.equals(passwordActual)) {
+        if (passwordEncoder.matches(passwordNueva, empleado.getPassword())) {
             mostrarError("La nueva contraseña debe ser diferente a la actual");
             return;
         }
-        
+
         try {
             // Cambiar contraseña
             empleadoService.cambiarPassword(empleado.getIdEmpleado(), passwordNueva);
-            
+
             // Cerrar modal y continuar al dashboard
             if (modalStage != null) {
                 modalStage.close();
             }
-            
+
             // Navegar al dashboard
             stageManager.switchScene(FxmlView.DASHBOARD);
-            
+
         } catch (Exception e) {
             mostrarError("Error al cambiar contraseña: " + e.getMessage());
         }

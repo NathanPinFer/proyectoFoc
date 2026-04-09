@@ -4,10 +4,16 @@ import com.proyectoFoc.entity.Empleado;
 import com.proyectoFoc.repository.EmpleadoRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private EmpleadoRepository empleadoRepository;
@@ -24,16 +30,15 @@ public class AuthService {
      * @return true si las credenciales son correctas, false en caso contrario
      */
     public boolean login(String usuario, String password) {
-        Empleado empleado = empleadoRepository.findByUsuario(usuario).orElse(null);
+        Optional<Empleado> empleadoOpt = empleadoRepository.findByUsuario(usuario);
 
-        if (empleado != null && empleado.getPassword().equals(password)) {
-            // Verificar que el empleado esté activo
-            if (Boolean.FALSE.equals(empleado.getActivo())) {
-                return false; // Empleado desactivado
+        if (empleadoOpt.isPresent()) {
+            Empleado empleado = empleadoOpt.get();
+
+            if (passwordEncoder.matches(password, empleado.getPassword())) {
+                empleadoActual = empleado;
+                return true;
             }
-            
-            empleadoActual = empleado;
-            return true;
         }
 
         return false;

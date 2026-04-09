@@ -6,6 +6,7 @@ import com.proyectoFoc.repository.EmpleadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class EmpleadoService {
-    
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private EmpleadoRepository empleadoRepository;
     
@@ -86,7 +90,11 @@ public class EmpleadoService {
         empleado.setEmail(dto.getEmail());
         empleado.setTelefono(dto.getTelefono());
         empleado.setUsuario(dto.getUsuario());
-        empleado.setPassword(passwordTemporal); // Password sin encriptar por ahora
+
+        // Ciframos la contraseña
+        String passwordCifrada = passwordEncoder.encode(passwordTemporal);
+        empleado.setPassword(passwordCifrada);
+
         empleado.setCargo(dto.getCargo());
         empleado.setFechaContratacion(LocalDate.now());
         empleado.setSalario(dto.getSalario());
@@ -149,9 +157,12 @@ public class EmpleadoService {
     public void cambiarPassword(Integer idEmpleado, String nuevaPassword) {
         Empleado empleado = empleadoRepository.findById(idEmpleado)
                 .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
-        
-        empleado.setPassword(nuevaPassword);
-        empleado.setDebeCambiarPassword(false); // Ya no necesita cambiar password
+
+        // Ciframos la nueva contraseña
+        String passwordCifrada = passwordEncoder.encode(nuevaPassword);
+        empleado.setPassword(passwordCifrada);
+        empleado.setDebeCambiarPassword(false);
+
         empleadoRepository.save(empleado);
     }
     
